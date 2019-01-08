@@ -1,2 +1,3 @@
 # bissucket
 
+bitbucketのissueをあれこれするcliツール
