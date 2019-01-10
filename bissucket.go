@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/urfave/cli"
-	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
@@ -46,7 +45,7 @@ func main() {
 		viper.AddConfigPath(configPath)
 
 		var bitbucketUserName string
-		var bitbucketPassWord string
+		var bitbucketToken string
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
@@ -56,19 +55,15 @@ func main() {
 
 			fmt.Println("")
 
-			fmt.Println("Please enter the password of Bitbucket.")
-			pass, err := terminal.ReadPassword(int(syscall.Stdin))
+			fmt.Println("Please enter the token of Bitbucket.")
+			fmt.Println("※The entered contents are not displayed.")
+			token, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
 				return fmt.Errorf("Error: %s", err)
 			}
 
-			passHash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
-			if err != nil {
-				return fmt.Errorf("Error: %s", err)
-			}
-
-			bitbucketPassWord = string(passHash)
-			viper.Set("bitbucketPassWord", bitbucketPassWord)
+			bitbucketToken = string(token)
+			viper.Set("bitbucketToken", bitbucketToken)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
 			if err != nil {
@@ -80,6 +75,11 @@ func main() {
 				return fmt.Errorf("Error: %s", err)
 			}
 
+		}
+
+		app.Metadata = map[string]interface{}{
+			"bitbucketUserName": viper.GetString("bitbucketUserName"),
+			"bitbucketToken":    viper.GetString("bitbucketToken"),
 		}
 
 		return nil
