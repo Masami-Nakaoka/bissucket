@@ -6,15 +6,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"syscall"
 
 	"github.com/spf13/viper"
 
 	"github.com/urfave/cli"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configPath = os.Getenv("Home")
+var configPath = os.Getenv("HOME")
 
 const (
 	configFileName = ".bissucket.config"
@@ -23,6 +21,7 @@ const (
 )
 
 func main() {
+	fmt.Println(configPath)
 	app := cli.NewApp()
 	app.Name = "bissucket"
 	app.Version = "0.0.1"
@@ -40,14 +39,15 @@ func main() {
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
-		viper.SetConfigType(configFileType)
-		viper.SetConfigFile(configFileName)
+		viper.SetConfigName(configFileName)
 		viper.AddConfigPath(configPath)
+		viper.AddConfigPath(".")
 
 		var bitbucketUserName string
 		var bitbucketToken string
 
 		if err := viper.ReadInConfig(); err != nil {
+			fmt.Errorf("Error: %s", err)
 			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
 			fmt.Println("Please enter the user name of Bitbucket.")
 			fmt.Scan(&bitbucketUserName)
@@ -56,13 +56,7 @@ func main() {
 			fmt.Println("")
 
 			fmt.Println("Please enter the token of Bitbucket.")
-			fmt.Println("※The entered contents are not displayed.")
-			token, err := terminal.ReadPassword(int(syscall.Stdin))
-			if err != nil {
-				return fmt.Errorf("Error: %s", err)
-			}
-
-			bitbucketToken = string(token)
+			fmt.Scan(&bitbucketToken)
 			viper.Set("bitbucketToken", bitbucketToken)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
@@ -74,6 +68,15 @@ func main() {
 			if err != nil {
 				return fmt.Errorf("Error: %s", err)
 			}
+
+			fmt.Println("")
+			fmt.Println("Creation of config file succeeded.")
+			fmt.Println("Enter the following command for Bitbucket's Synchronize the repository.")
+			fmt.Println("")
+			fmt.Println("bissucket repository --sync")
+			fmt.Println("")
+
+			os.Exit(0)
 
 		}
 
@@ -92,15 +95,7 @@ func main() {
 			Flags: []cli.Flag{
 				syncFlag,
 			},
-			Action: func(c *cli.Context) error {
-				if c.Bool("sync") {
-					fmt.Println("Sync")
-				} else {
-					fmt.Println("Not sync")
-				}
-
-				return nil
-			},
+			Action: Repository,
 		},
 	}
 
