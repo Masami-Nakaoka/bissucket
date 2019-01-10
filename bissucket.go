@@ -6,13 +6,14 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"github.com/spf13/viper"
-
 	"github.com/urfave/cli"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configPath = os.Getenv("HOME")
+var configPath = os.Getenv("Home")
 
 const (
 	configFileName = ".bissucket.config"
@@ -44,7 +45,7 @@ func main() {
 		viper.AddConfigPath(".")
 
 		var bitbucketUserName string
-		var bitbucketToken string
+		var bitbucketPassword string
 
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Errorf("Error: %s", err)
@@ -56,8 +57,14 @@ func main() {
 			fmt.Println("")
 
 			fmt.Println("Please enter the token of Bitbucket.")
-			fmt.Scan(&bitbucketToken)
-			viper.Set("bitbucketToken", bitbucketToken)
+
+			pass, err := terminal.ReadPassword(int(syscall.Stdin))
+			if err != nil {
+				return err
+			}
+
+			bitbucketPassword = string(pass)
+			viper.Set("bitbucketPassword", bitbucketPassword)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
 			if err != nil {
@@ -82,7 +89,7 @@ func main() {
 
 		app.Metadata = map[string]interface{}{
 			"bitbucketUserName": viper.GetString("bitbucketUserName"),
-			"bitbucketToken":    viper.GetString("bitbucketToken"),
+			"bitbucketPassword": viper.GetString("bitbucketPassword"),
 		}
 
 		return nil
