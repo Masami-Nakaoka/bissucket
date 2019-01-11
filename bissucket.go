@@ -57,7 +57,7 @@ func main() {
 
 			pass, err := terminal.ReadPassword(syscall.Stdin)
 			if err != nil {
-				fmt.Print(err)
+				fmt.Errorf("ReadPasswordError:", err)
 			} else {
 				bitbucketPassword = string(pass)
 			}
@@ -66,12 +66,12 @@ func main() {
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
 			if err != nil {
-				return fmt.Errorf("Error: %s", err)
+				return fmt.Errorf("JsonMarshalError: %s", err)
 			}
 
 			err = ioutil.WriteFile(filepath.Join(configPath, configFileName+"."+configFileType), configJSON, os.ModePerm)
 			if err != nil {
-				return fmt.Errorf("Error: %s", err)
+				return fmt.Errorf("WriteFileError: %s", err)
 			}
 
 			fmt.Println("")
@@ -104,7 +104,8 @@ func main() {
 		},
 	}
 
-	fmt.Println("Hello")
-
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fplintln(os.Stderr, "AppError:", err)
+		os.Exit(1)
+	}
 }

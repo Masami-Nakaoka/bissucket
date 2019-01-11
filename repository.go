@@ -118,7 +118,7 @@ func Repository(c *cli.Context) error {
 
 		repositories, err := getRepositories(c)
 		if err != nil {
-			return errors.New("Error")
+			return fmt.Errorf("getRepositoriesError: %s", err)
 		}
 		fmt.Println(repositories)
 	}
