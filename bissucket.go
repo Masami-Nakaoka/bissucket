@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configPath = os.Getenv("HOME")
+var configPath = os.Getenv("Home")
 
 const (
 	configFileName = ".bissucket.config"
@@ -55,13 +55,13 @@ func main() {
 
 			fmt.Print("Please enter the password of Bitbucket: ")
 
-			pass, err := terminal.ReadPassword(int(syscall.Stdin))
+			pass, err := terminal.ReadPassword(syscall.Stdin)
 			if err != nil {
 				fmt.Print(err)
 			} else {
 				bitbucketPassword = string(pass)
 			}
-			// viper.Set("bitbucketUserName", bitbucketUserName)
+			viper.Set("bitbucketUserName", bitbucketUserName)
 			viper.Set("bitbucketPassword", bitbucketPassword)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")

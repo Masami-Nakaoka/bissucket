@@ -106,6 +106,27 @@ const (
 var repositories *Repo
 
 func Repository(c *cli.Context) error {
+
+	if c.NArg() > 1 {
+		return errors.New("Too many arguments")
+	}
+
+	fmt.Print(c.Bool("s"))
+	if c.Bool("s") {
+
+		fmt.Print("Sync start")
+
+		repositories, err := getRepositories(c)
+		if err != nil {
+			return errors.New("Error")
+		}
+		fmt.Println(repositories)
+	}
+
+	return nil
+}
+
+func getRepositories(c *cli.Context) (*Repo, error) {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
@@ -113,7 +134,7 @@ func Repository(c *cli.Context) error {
 
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
-		return fmt.Errorf("RequestError: %s", err)
+		return nil, fmt.Errorf("RequestError: %s", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -124,23 +145,21 @@ func Repository(c *cli.Context) error {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("ResponceError: %s", err)
+		return nil, fmt.Errorf("ResponceError: %s", err)
 	}
 
 	if res.StatusCode != 200 {
-		return errors.New(res.Status)
+		return nil, errors.New(res.Status)
 	}
 
 	defer res.Body.Close()
 
 	err = json.NewDecoder(res.Body).Decode(&repositories)
 	if err != nil {
-		return fmt.Errorf("JsonDecodeError: %s", err)
+		return nil, fmt.Errorf("JsonDecodeError: %s", err)
 	}
 
-	fmt.Println(repositories)
-
-	return nil
+	return repositories, nil
 }
 
 func saveRepository() error {
