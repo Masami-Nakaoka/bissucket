@@ -105,13 +105,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:427cdd2c12a3290ace873d2f9d3958d126c4d75596dbc09de05852da08a3dab5"
+  digest = "1:38f553aff0273ad6f367cb0a0f8b6eecbaef8dc6cb8b50e57b6a81c1d5b1e332"
   name = "golang.org/x/crypto"
-  packages = [
-    "bcrypt",
-    "blowfish",
-    "ssh/terminal",
-  ]
+  packages = ["ssh/terminal"]
   pruneopts = "UT"
   revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
 
@@ -155,7 +151,6 @@
   input-imports = [
     "github.com/spf13/viper",
     "github.com/urfave/cli",
-    "golang.org/x/crypto/bcrypt",
     "golang.org/x/crypto/ssh/terminal",
   ]
   solver-name = "gps-cdcl"

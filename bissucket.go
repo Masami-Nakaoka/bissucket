@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configPath = os.Getenv("Home")
+var configPath = os.Getenv("HOME")
 
 const (
 	configFileName = ".bissucket.config"
@@ -48,22 +48,20 @@ func main() {
 		var bitbucketPassword string
 
 		if err := viper.ReadInConfig(); err != nil {
-			fmt.Errorf("Error: %s", err)
 			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
-			fmt.Println("Please enter the user name of Bitbucket.")
-			fmt.Scan(&bitbucketUserName)
-			viper.Set("bitbucketUserName", bitbucketUserName)
-
 			fmt.Println("")
+			fmt.Print("Please enter the user name of Bitbucket: ")
+			fmt.Scan(&bitbucketUserName)
 
-			fmt.Println("Please enter the token of Bitbucket.")
+			fmt.Print("Please enter the password of Bitbucket: ")
 
 			pass, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
-				return err
+				fmt.Print(err)
+			} else {
+				bitbucketPassword = string(pass)
 			}
-
-			bitbucketPassword = string(pass)
+			// viper.Set("bitbucketUserName", bitbucketUserName)
 			viper.Set("bitbucketPassword", bitbucketPassword)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")

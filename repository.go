@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/urfave/cli"
 	"net/http"
+
+	"github.com/urfave/cli"
 )
 
 type Repo struct {
@@ -108,7 +109,7 @@ func Repository(c *cli.Context) error {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
-	endPoint := baseUrl + userName + "?pagelen=100"
+	endPoint := bitbucketURI + "repositories/" + userName + "?pagelen=100"
 
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
@@ -144,4 +145,6 @@ func Repository(c *cli.Context) error {
 
 func saveRepository() error {
 	// cacheふぁいるにほぞん
+
+	return nil
 }
