@@ -141,3 +141,7 @@ func Repository(c *cli.Context) error {
 
 	return nil
 }
+
+func saveRepository() error {
+	// cacheふぁいるにほぞん
+}
