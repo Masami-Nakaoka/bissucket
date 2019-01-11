@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/urfave/cli"
 )
@@ -106,21 +108,20 @@ const (
 var repositories *Repo
 
 func Repository(c *cli.Context) error {
-
 	if c.NArg() > 1 {
 		return errors.New("Too many arguments")
 	}
 
-	fmt.Print(c.Bool("s"))
 	if c.Bool("s") {
-
 		fmt.Print("Sync start")
 
 		repositories, err := getRepositories(c)
 		if err != nil {
 			return fmt.Errorf("getRepositoriesError: %s", err)
 		}
-		fmt.Println(repositories)
+
+		saveRepository(repositoryCachePath, repositories)
+
 	}
 
 	return nil
@@ -160,10 +161,21 @@ func getRepositories(c *cli.Context) (*Repo, error) {
 	}
 
 	return repositories, nil
+
 }
 
-func saveRepository() error {
-	// cacheふぁいるにほぞん
+func saveRepository(filename string, r *Repo) {
+	fmt.Println(r)
+	buf, err := json.MarshalIndent(r, "", "    ")
+	if err != nil {
+		fmt.Printf("JsonMarshallError: %s", err)
 
-	return nil
+	}
+
+	err = ioutil.WriteFile(filename, buf, os.ModePerm)
+	if err != nil {
+		fmt.Printf("WriteFileError: %s", err)
+
+	}
+
 }

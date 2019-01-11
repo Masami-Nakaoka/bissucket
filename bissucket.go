@@ -13,7 +13,10 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-var configPath = os.Getenv("Home")
+var (
+	configPath          = os.Getenv("HOME")
+	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
+)
 
 const (
 	configFileName = ".bissucket.config"
@@ -57,7 +60,7 @@ func main() {
 
 			pass, err := terminal.ReadPassword(syscall.Stdin)
 			if err != nil {
-				fmt.Errorf("ReadPasswordError:", err)
+				fmt.Errorf("ReadPasswordError: %s", err)
 			} else {
 				bitbucketPassword = string(pass)
 			}
@@ -105,7 +108,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fplintln(os.Stderr, "AppError:", err)
+		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}
 }
