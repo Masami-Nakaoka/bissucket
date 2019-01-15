@@ -108,6 +108,10 @@ func main() {
 			},
 			Action: Repository,
 		},
+		{
+			Name:   "sync",
+			Action: Sync,
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
