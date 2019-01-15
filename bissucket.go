@@ -25,7 +25,6 @@ const (
 )
 
 func main() {
-	fmt.Println(configPath)
 	app := cli.NewApp()
 	app.Name = "bissucket"
 	app.Version = "0.0.1"
@@ -53,19 +52,22 @@ func main() {
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
 			fmt.Println("")
-			fmt.Print("Please enter the user name of Bitbucket: ")
-			fmt.Scan(&bitbucketUserName)
 
 			fmt.Print("Please enter the password of Bitbucket: ")
 
-			pass, err := terminal.ReadPassword(syscall.Stdin)
+			pass, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
 				fmt.Errorf("ReadPasswordError: %s", err)
 			} else {
 				bitbucketPassword = string(pass)
 			}
-			viper.Set("bitbucketUserName", bitbucketUserName)
+
 			viper.Set("bitbucketPassword", bitbucketPassword)
+
+			fmt.Println("")
+			fmt.Print("Please enter the user name of Bitbucket: ")
+			fmt.Scan(&bitbucketUserName)
+			viper.Set("bitbucketUserName", bitbucketUserName)
 
 			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
 			if err != nil {

@@ -102,7 +102,7 @@ type Repo struct {
 }
 
 const (
-	baseUrl = "https://api.bitbucket.org/2.0/repositories/"
+	baseURL = "https://api.bitbucket.org/2.0/repositories/"
 )
 
 var repositories *Repo
