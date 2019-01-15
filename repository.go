@@ -12,8 +12,8 @@ import (
 )
 
 type Repo struct {
-	Size   int `json:"size"`
-	Page   int `json:"page"`
+	// Size   int `json:"size"`
+	// Page   int `json:"page"`
 	Values []struct {
 		// 		Description string `json:"description"`
 		// 		IsPrivate   bool   `json:"is_private"`
@@ -73,7 +73,7 @@ type Repo struct {
 		// 			Type string `json:"type"`
 		// 		} `json:"mainbranch"`
 		// 		FullName  string `json:"full_name"`
-		// 		HasIssues bool   `json:"has_issues"`
+		HasIssues bool `json:"has_issues"`
 		// 		Owner     struct {
 		// 			UUID     string `json:"uuid"`
 		// 			Type     string `json:"type"`
@@ -97,27 +97,35 @@ type Repo struct {
 		// 		Size int    `json:"size"`
 		// 		Type string `json:"type"`
 	} `json:"values"`
-	Pagelen int    `json:"pagelen"`
-	Next    string `json:"next"`
+	// Pagelen int    `json:"pagelen"`
+	// Next    string `json:"next"`
 }
 
 var repositories *Repo
 
 func Repository(c *cli.Context) error {
 	if c.NArg() > 1 {
-		return errors.New("Too many arguments")
+		return errors.New("Too many arguments.")
 	}
 
 	if c.Bool("s") {
-		fmt.Print("Sync start")
+		fmt.Println("Sync start")
 
 		repositories, err := fetchRepositories(c)
 		if err != nil {
 			return fmt.Errorf("getRepositoriesError: %s", err)
 		}
 
-		saveRepository(repositoryCachePath, repositories)
+		err = saveRepository(repositoryCachePath, repositories)
+		if err != nil {
+			return fmt.Errorf("saveRepositoryError: %s", err)
+		}
 
+	} else if c.Bool("l") {
+		err := showRepositoryList(repositoryCachePath)
+		if err != nil {
+			return fmt.Errorf("showRepositoryListError: %s", err)
+		}
 	}
 
 	return nil
@@ -138,7 +146,6 @@ func fetchRepositories(c *cli.Context) (*Repo, error) {
 	req.SetBasicAuth(userName, pass)
 
 	fmt.Println("Request Set")
-	fmt.Println(req)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -160,8 +167,7 @@ func fetchRepositories(c *cli.Context) (*Repo, error) {
 
 }
 
-func saveRepository(filename string, r *Repo) {
-	fmt.Println(r)
+func saveRepository(filename string, r *Repo) error {
 	buf, err := json.MarshalIndent(r, "", "    ")
 	if err != nil {
 		fmt.Printf("JsonMarshallError: %s", err)
@@ -174,4 +180,27 @@ func saveRepository(filename string, r *Repo) {
 
 	}
 
+	fmt.Println("Sync sucess")
+
+	return nil
+
+}
+
+func showRepositoryList(filename string) error {
+	buf, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("fileReadError: %s", err)
+	}
+
+	err = json.Unmarshal(buf, &repositories)
+
+	fmt.Println("-----------------------\n  Repository Name  \n-----------------------")
+
+	for _, repo := range repositories.Values {
+		fmt.Printf("%s\n", repo.Name)
+	}
+
+	fmt.Println("")
+
+	return nil
 }

@@ -30,10 +30,10 @@ func main() {
 	app.Version = "0.0.1"
 	app.Usage = "bissucket is a cli tool to manipulate bitbucket issues"
 
-	// listFlag := cli.BoolFlag{
-	// 	Name:  "list, l",
-	// 	Usage: "Display data list",
-	// }
+	listFlag := cli.BoolFlag{
+		Name:  "list, l",
+		Usage: "Show your repository list",
+	}
 
 	syncFlag := cli.BoolFlag{
 		Name:  "sync, s",
@@ -104,6 +104,7 @@ func main() {
 			Aliases: []string{"repo"},
 			Flags: []cli.Flag{
 				syncFlag,
+				listFlag,
 			},
 			Action: Repository,
 		},
