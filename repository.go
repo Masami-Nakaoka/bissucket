@@ -101,10 +101,6 @@ type Repo struct {
 	Next    string `json:"next"`
 }
 
-const (
-	baseURL = "https://api.bitbucket.org/2.0/repositories/"
-)
-
 var repositories *Repo
 
 func Repository(c *cli.Context) error {
@@ -115,7 +111,7 @@ func Repository(c *cli.Context) error {
 	if c.Bool("s") {
 		fmt.Print("Sync start")
 
-		repositories, err := getRepositories(c)
+		repositories, err := fetchRepositories(c)
 		if err != nil {
 			return fmt.Errorf("getRepositoriesError: %s", err)
 		}
@@ -127,7 +123,7 @@ func Repository(c *cli.Context) error {
 	return nil
 }
 
-func getRepositories(c *cli.Context) (*Repo, error) {
+func fetchRepositories(c *cli.Context) (*Repo, error) {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
