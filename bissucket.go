@@ -35,11 +35,6 @@ func main() {
 		Usage: "Show your repository list",
 	}
 
-	syncFlag := cli.BoolFlag{
-		Name:  "sync, s",
-		Usage: "Get your repository from Bitbucket",
-	}
-
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
 		viper.SetConfigName(configFileName)
@@ -58,9 +53,9 @@ func main() {
 			pass, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
 				fmt.Errorf("ReadPasswordError: %s", err)
-			} else {
-				bitbucketPassword = string(pass)
 			}
+
+			bitbucketPassword = string(pass)
 
 			viper.Set("bitbucketPassword", bitbucketPassword)
 
@@ -93,6 +88,7 @@ func main() {
 		app.Metadata = map[string]interface{}{
 			"bitbucketUserName": viper.GetString("bitbucketUserName"),
 			"bitbucketPassword": viper.GetString("bitbucketPassword"),
+			"useRepository": viper.GetString("useRepository"),
 		}
 
 		return nil
@@ -103,10 +99,24 @@ func main() {
 			Name:    "repository",
 			Aliases: []string{"repo"},
 			Flags: []cli.Flag{
-				syncFlag,
 				listFlag,
 			},
 			Action: Repository,
+			Subcommands: []cli.Command{
+				{
+					Name:   "set",
+					Usage:  "Set the repository to use.",
+					Action: SetRepository,
+				},
+			},
+		},
+		{
+			Name:    "issue",
+			Aliases: []string{"i"},
+			Action:  Sync,
+			Flags: []cli.Flag{
+				listFlag,
+			},
 		},
 		{
 			Name:   "sync",
