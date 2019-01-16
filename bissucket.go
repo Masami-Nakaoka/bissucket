@@ -52,7 +52,7 @@ func main() {
 
 			pass, err := terminal.ReadPassword(int(syscall.Stdin))
 			if err != nil {
-				fmt.Errorf("ReadPasswordError: %s", err)
+				return fmt.Errorf("ReadPasswordError: %s", err)
 			}
 
 			bitbucketPassword = string(pass)
@@ -88,7 +88,7 @@ func main() {
 		app.Metadata = map[string]interface{}{
 			"bitbucketUserName": viper.GetString("bitbucketUserName"),
 			"bitbucketPassword": viper.GetString("bitbucketPassword"),
-			"useRepository": viper.GetString("useRepository"),
+			"useRepository":     viper.GetString("useRepository"),
 		}
 
 		return nil
