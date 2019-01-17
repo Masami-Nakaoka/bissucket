@@ -119,6 +119,8 @@ var issues *Issues
 func Issue(c *cli.Context) error {
 	if c.NArg() > 1 {
 		return errors.New("Too manu arguments.")
+	} else if c.NArg() == 0 {
+
 	}
 
 	userName := c.App.Metadata["bitbucketUserName"].(string)
@@ -160,7 +162,7 @@ func fecthIssueFromBitbucketRepository(repositoryName string, userName string, p
 	}
 
 	fmt.Println("------------------------------")
-	fmt.Println("Issue List of" + repositoryName)
+	fmt.Println("Issue List of " + repositoryName)
 	fmt.Println("------------------------------")
 	fmt.Println("ID / Title / Type / State / Priority / Kind / Assignee")
 

@@ -27,8 +27,12 @@ const (
 func main() {
 	app := cli.NewApp()
 	app.Name = "bissucket"
-	app.Version = "0.0.1"
+	app.HelpName = "bissucket"
+	app.Version = "0.1.1"
 	app.Usage = "bissucket is a cli tool to manipulate bitbucket issues"
+	app.UsageText = "bissucket command [command options] [arguments...]"
+	app.Author = "Masami_Nakaoka"
+	app.Email = "neti0326@gmail.com"
 
 	listFlag := cli.BoolFlag{
 		Name:  "list, l",
@@ -95,23 +99,27 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:    "repository",
-			Aliases: []string{"repo"},
+			Name:      "repository",
+			Aliases:   []string{"repo"},
+			Usage:     "Repository related operations. Currently only list view.",
+			UsageText: "bissucket repository --list",
 			Flags: []cli.Flag{
 				listFlag,
 			},
 			Action: Repository,
 		},
 		{
-			Name:    "issue",
-			Aliases: []string{"i"},
-			Usage:   "Display the issue of a specific repository.",
-			Action:  Issue,
+			Name:      "issue",
+			Aliases:   []string{"i"},
+			Usage:     "Display the issue of a specific repository.",
+			UsageText: "bissucket issue [repository name]",
+			Action:    Issue,
 		},
 		{
-			Name:   "sync",
-			Usage:  "Get your repository from Bitbucket.",
-			Action: Sync,
+			Name:      "sync",
+			Usage:     "Get your repository from Bitbucket.",
+			UsageText: "bissucket sync",
+			Action:    Sync,
 		},
 	}
 
