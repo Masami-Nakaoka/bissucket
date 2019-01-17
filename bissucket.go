@@ -88,7 +88,6 @@ func main() {
 		app.Metadata = map[string]interface{}{
 			"bitbucketUserName": viper.GetString("bitbucketUserName"),
 			"bitbucketPassword": viper.GetString("bitbucketPassword"),
-			"useRepository":     viper.GetString("useRepository"),
 		}
 
 		return nil
@@ -102,24 +101,16 @@ func main() {
 				listFlag,
 			},
 			Action: Repository,
-			Subcommands: []cli.Command{
-				{
-					Name:   "set",
-					Usage:  "Set the repository to use.",
-					Action: SetRepository,
-				},
-			},
 		},
 		{
 			Name:    "issue",
 			Aliases: []string{"i"},
-			Action:  Sync,
-			Flags: []cli.Flag{
-				listFlag,
-			},
+			Usage:   "Display the issue of a specific repository.",
+			Action:  Issue,
 		},
 		{
 			Name:   "sync",
+			Usage:  "Get your repository from Bitbucket.",
 			Action: Sync,
 		},
 	}

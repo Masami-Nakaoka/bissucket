@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/urfave/cli"
@@ -110,17 +114,60 @@ type Issues struct {
 	}
 }
 
+var issues *Issues
+
 func Issue(c *cli.Context) error {
-	if c.Bool("l") {
-		err := showIssuesList()
-		if err != nil {
-			return fmt.Errorf("showIssuesListErrot: %s", err)
-		}
+	if c.NArg() > 1 {
+		return errors.New("Too manu arguments.")
+	}
+
+	userName := c.App.Metadata["bitbucketUserName"].(string)
+	pass := c.App.Metadata["bitbucketPassword"].(string)
+
+	repositoryName := c.Args().First()
+	err := fecthIssueFromBitbucketRepository(repositoryName, userName, pass)
+	if err != nil {
+		return fmt.Errorf("FetchError: %s", err)
 	}
 
 	return nil
 }
 
-func showIssuesList() error {
+func fecthIssueFromBitbucketRepository(repositoryName string, userName string, pass string) error {
+	endpoint := bitbucketURI + "repositories/" + userName + "/" + repositoryName + "/issues"
+
+	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return fmt.Errorf("RequeestError: %s", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.SetBasicAuth(userName, pass)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("ResponseError: %s", err)
+	}
+	if res.StatusCode != 200 {
+		return errors.New(res.Status)
+	}
+
+	defer res.Body.Close()
+
+	err = json.NewDecoder(res.Body).Decode(&issues)
+	if err != nil {
+		return fmt.Errorf("DecodeError: %s", err)
+	}
+
+	fmt.Println("------------------------------")
+	fmt.Println("Issue List of" + repositoryName)
+	fmt.Println("------------------------------")
+	fmt.Println("ID / Title / Type / State / Priority / Kind / Assignee")
+
+	var issueTemplate string
+	for _, issue := range issues.Values {
+		issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.Title + " / " + issue.Type + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username
+		fmt.Println(issueTemplate)
+	}
 	return nil
 }

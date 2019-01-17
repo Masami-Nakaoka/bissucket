@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-type Repo struct {
+type Repos struct {
 	// Size   int `json:"size"`
 	// Page   int `json:"page"`
 	Values []struct {
@@ -101,7 +101,7 @@ type Repo struct {
 	// Next    string `json:"next"`
 }
 
-var repositories *Repo
+var repositories *Repos
 
 func Sync(c *cli.Context) error {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
@@ -143,7 +143,7 @@ func Sync(c *cli.Context) error {
 	return nil
 }
 
-func saveRepositoryInCache(filename string, r *Repo) error {
+func saveRepositoryInCache(filename string, r *Repos) error {
 	buf, err := json.MarshalIndent(r, "", "    ")
 	if err != nil {
 		return fmt.Errorf("JsonMarshallError: %s", err)
