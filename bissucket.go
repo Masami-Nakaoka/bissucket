@@ -29,7 +29,7 @@ func main() {
 	app.Name = "bissucket"
 	app.HelpName = "bissucket"
 	app.Version = "0.1.1"
-	app.Usage = "bissucket is a cli tool to manipulate bitbucket issues"
+	app.Usage = "bissucket is a cli tool to manipulate bitbucket issues. First from [bissucket sync] please."
 	app.UsageText = "bissucket command [command options] [arguments...]"
 	app.Author = "Masami_Nakaoka"
 	app.Email = "neti0326@gmail.com"
