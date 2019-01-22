@@ -36,7 +36,11 @@ func main() {
 
 	listFlag := cli.BoolFlag{
 		Name:  "list, l",
-		Usage: "Show your repository list",
+		Usage: "Show your repository list.",
+	}
+	detailFlag := cli.IntFlag{
+		Name:  "detail, d",
+		Usage: "Display issue details.",
 	}
 
 	// コンフィグファイルのチェック。なければ作成
@@ -113,7 +117,10 @@ func main() {
 			Aliases:   []string{"i"},
 			Usage:     "Display the issue of a specific repository.",
 			UsageText: "bissucket issue [repository name]",
-			Action:    Issue,
+			Flags: []cli.Flag{
+				detailFlag,
+			},
+			Action: Issue,
 		},
 		{
 			Name:      "sync",

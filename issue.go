@@ -127,15 +127,25 @@ func Issue(c *cli.Context) error {
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
 	repositoryName := c.Args().First()
-	err := fecthIssueFromBitbucketRepository(repositoryName, userName, pass)
-	if err != nil {
-		return fmt.Errorf("FetchError: %s", err)
+
+	if c.Int("d") > 0 {
+		issueID := c.Int("d")
+		err := fechIssueDetailFromBitbucket(repositoryName, issueID, userName, pass)
+		if err != nil {
+			return fmt.Errorf("FetchError: %s", err)
+		}
+
+	} else {
+		err := fecthAllIssueFromBitbucket(repositoryName, userName, pass)
+		if err != nil {
+			return fmt.Errorf("FetchError: %s", err)
+		}
 	}
 
 	return nil
 }
 
-func fecthIssueFromBitbucketRepository(repositoryName string, userName string, pass string) error {
+func fecthAllIssueFromBitbucket(repositoryName string, userName string, pass string) error {
 	endpoint := bitbucketURI + "repositories/" + userName + "/" + repositoryName + "/issues"
 
 	req, err := http.NewRequest("GET", endpoint, nil)
@@ -171,5 +181,10 @@ func fecthIssueFromBitbucketRepository(repositoryName string, userName string, p
 		issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.Title + " / " + issue.Type + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username
 		fmt.Println(issueTemplate)
 	}
+	return nil
+}
+
+func fechIssueDetailFromBitbucket(repositoryName string, issueID int, userName string, pass string) error {
+	fmt.Println(issueID)
 	return nil
 }
