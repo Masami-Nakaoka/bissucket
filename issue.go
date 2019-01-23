@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"time"
 
+	bitbucket "bitbucket.org/bissucket/lib"
+
 	"github.com/urfave/cli"
 )
 
@@ -128,40 +130,9 @@ func Issue(c *cli.Context) error {
 
 	repositoryName := c.Args().First()
 
-	if c.Int("d") > 0 {
-		issueID := c.Int("d")
-		err := fechIssueDetailFromBitbucket(repositoryName, issueID, userName, pass)
-		if err != nil {
-			return fmt.Errorf("FetchError: %s", err)
-		}
-
-	} else {
-		err := fecthAllIssueFromBitbucket(repositoryName, userName, pass)
-		if err != nil {
-			return fmt.Errorf("FetchError: %s", err)
-		}
-	}
-
-	return nil
-}
-
-func fecthAllIssueFromBitbucket(repositoryName string, userName string, pass string) error {
-	endpoint := bitbucketURI + "repositories/" + userName + "/" + repositoryName + "/issues"
-
-	req, err := http.NewRequest("GET", endpoint, nil)
+	res, err := fecthAllIssueFromBitbucket(repositoryName, userName, pass)
 	if err != nil {
-		return fmt.Errorf("RequeestError: %s", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(userName, pass)
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("ResponseError: %s", err)
-	}
-	if res.StatusCode != 200 {
-		return errors.New(res.Status)
+		return fmt.Errorf("FetchError: %s", err)
 	}
 
 	defer res.Body.Close()
@@ -171,20 +142,48 @@ func fecthAllIssueFromBitbucket(repositoryName string, userName string, pass str
 		return fmt.Errorf("DecodeError: %s", err)
 	}
 
-	fmt.Println("------------------------------")
-	fmt.Println("Issue List of " + repositoryName)
-	fmt.Println("------------------------------")
-	fmt.Println("ID / Title / Type / State / Priority / Kind / Assignee")
+	if c.Int("d") > 0 {
+		issueID := c.Int("d")
 
-	var issueTemplate string
-	for _, issue := range issues.Values {
-		issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.Title + " / " + issue.Type + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username
-		fmt.Println(issueTemplate)
+		fmt.Println("------------------------------")
+		fmt.Println("Details of " + repositoryName + "'s issue")
+		fmt.Println("------------------------------")
+
+		for _, issue := range issues.Values {
+			if issueID == issue.ID {
+				fmt.Print("Issue ID: ")
+				fmt.Println(issue.ID)
+				fmt.Println("Issue Title: " + issue.Title)
+				fmt.Println("Issue Description: ")
+				fmt.Println(issue.Content.Raw)
+				fmt.Println("")
+			}
+		}
+
+	} else {
+		fmt.Println("------------------------------")
+		fmt.Println("Issue List of " + repositoryName)
+		fmt.Println("------------------------------")
+		fmt.Println("ID / Title / Type / State / Priority / Kind / Assignee")
+
+		var issueTemplate string
+		for _, issue := range issues.Values {
+			issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.Title + " / " + issue.Type + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username
+			fmt.Println(issueTemplate)
+		}
 	}
+
 	return nil
 }
 
-func fechIssueDetailFromBitbucket(repositoryName string, issueID int, userName string, pass string) error {
-	fmt.Println(issueID)
-	return nil
+func fecthAllIssueFromBitbucket(repositoryName string, userName string, pass string) (*http.Response, error) {
+	endPoint := bitbucketURI + "repositories/" + userName + "/" + repositoryName + "/issues"
+
+	res, err := bitbucket.DoGet(endPoint, userName, pass)
+	if err != nil {
+		return nil, fmt.Errorf("APIError: %s", err)
+	}
+
+	return res, nil
+
 }
