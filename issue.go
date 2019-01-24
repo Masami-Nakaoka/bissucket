@@ -151,10 +151,14 @@ func Issue(c *cli.Context) error {
 
 		for _, issue := range issues.Values {
 			if issueID == issue.ID {
-				fmt.Print("Issue ID: ")
+				fmt.Print("ID:        ")
 				fmt.Println(issue.ID)
-				fmt.Println("Issue Title: " + issue.Title)
-				fmt.Println("Issue Description: ")
+				fmt.Println("State:    " + issue.State)
+				fmt.Println("Priority: " + issue.Priority)
+				fmt.Println("Kind:     " + issue.Kind)
+				fmt.Println("Assignee: " + issue.Assignee.Username)
+				fmt.Println("Title:    " + issue.Title)
+				fmt.Println("Content:  ")
 				fmt.Println(issue.Content.Raw)
 				fmt.Println("")
 			}
@@ -164,11 +168,11 @@ func Issue(c *cli.Context) error {
 		fmt.Println("------------------------------")
 		fmt.Println("Issue List of " + repositoryName)
 		fmt.Println("------------------------------")
-		fmt.Println("ID / Title / Type / State / Priority / Kind / Assignee")
+		fmt.Println("ID / Title / State / Priority / Kind / Assignee")
 
 		var issueTemplate string
 		for _, issue := range issues.Values {
-			issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.Title + " / " + issue.Type + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username
+			issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username + " / " + issue.Title
 			fmt.Println(issueTemplate)
 		}
 	}
