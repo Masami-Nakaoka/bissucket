@@ -29,10 +29,8 @@ func main() {
 	app.Name = "bissucket"
 	app.HelpName = "bissucket"
 	app.Version = "0.1.1"
-	app.Usage = "bissucket is a cli tool to manipulate bitbucket issues. First from [bissucket sync] please."
-	app.UsageText = "bissucket command [command options] [arguments...]"
-	app.Author = "Masami_Nakaoka"
-	app.Email = "neti0326@gmail.com"
+	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI.\n    First from [bissucket sync] please."
+	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
 	listFlag := cli.BoolFlag{
 		Name:  "list, l",
@@ -86,7 +84,7 @@ func main() {
 			fmt.Println("Creation of config file succeeded.")
 			fmt.Println("Enter the following command for Bitbucket's Synchronize the repository.")
 			fmt.Println("")
-			fmt.Println("bissucket repository --sync")
+			fmt.Println("bissucket sync")
 			fmt.Println("")
 
 			os.Exit(0)

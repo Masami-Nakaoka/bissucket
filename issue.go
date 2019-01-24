@@ -168,7 +168,7 @@ func Issue(c *cli.Context) error {
 		fmt.Println("------------------------------")
 		fmt.Println("Issue List of " + repositoryName)
 		fmt.Println("------------------------------")
-		fmt.Println("ID / Title / State / Priority / Kind / Assignee")
+		fmt.Println("ID / State / Priority / Kind / Assignee / Title")
 
 		var issueTemplate string
 		for _, issue := range issues.Values {
