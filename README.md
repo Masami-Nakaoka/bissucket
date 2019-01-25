@@ -57,10 +57,10 @@ $HOME/.bissucket.repositoriescache.json
 I will investigate whether it can be realized.
 
 - Command add
-  - issue create
-  - issue complete
-  - add comment
-  - etc...
+    - issue create
+    - issue complete
+    - add comment
+    - etc...
 
 ---
 
