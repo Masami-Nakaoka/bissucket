@@ -52,6 +52,16 @@ The list of repositories is stored in the following location:
 $HOME/.bissucket.repositoriescache.json
 ```
 
+## Todo
+
+I will investigate whether it can be realized.
+
+- Command add
+  - issue create
+  - issue complete
+  - add comment
+  - etc...
+
 ---
 
 (From here down is under construction)
