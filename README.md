@@ -4,7 +4,7 @@ bissucket is a tool to manipulate Bitbucket Issue from the CLI.
 
 ## Usage
 
-```
+```shell
 NAME:
    bissucket - bissucket is a tool to manipulate Bitbucket Issue from the CLI.
     First from [bissucket sync] please.
@@ -30,7 +30,7 @@ GLOBAL OPTIONS:
 
 If you have installed Golang:
 
-```
+```shell
 go get -u bitbucket.org/Masami_Nakaoka/bissucket
 ```
 
@@ -42,13 +42,13 @@ When you execute the command for the first time, you need to enter the user name
 
 Next, execute the following command to obtain a list of repositories.
 
-```
+```shell
 bissucket sync
 ```
 
 The list of repositories is stored in the following location:
 
-```
+```shell
 $HOME/.bissucket.repositoriescache.json
 ```
 
