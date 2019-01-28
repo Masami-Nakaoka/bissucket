@@ -40,6 +40,10 @@ func main() {
 		Name:  "detail, d",
 		Usage: "Display issue details.",
 	}
+	titleFlag := cli.StringFlag{
+		Name:  "title, t",
+		Usage: "Title of Issue.",
+	}
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
@@ -119,6 +123,17 @@ func main() {
 				detailFlag,
 			},
 			Action: Issue,
+			Subcommands: []cli.Command{
+				{
+					Name:      "create",
+					Aliases:   []string{"c"},
+					Usage:     "Create an issue.",
+					UsageText: "bissucket issue create [command options]",
+					Flags: []cli.Flag{
+						titleFlag,
+					},
+				},
+			},
 		},
 		{
 			Name:      "sync",
