@@ -62,7 +62,10 @@ I will investigate whether it can be realized.
     - add comment
     - etc...
 
----
+## Author
 
-(From here down is under construction)
+Masami Nakaoka
 
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
