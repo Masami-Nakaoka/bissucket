@@ -44,6 +44,18 @@ func main() {
 		Name:  "title, t",
 		Usage: "Title of Issue.",
 	}
+	priorityFlag := cli.StringFlag{
+		Name: "priority, p",
+		Usage: "Priority of Issue.",
+	}
+	kindFlag := cli.StringFlag{
+		Name: "kind, k",
+		Usage: "Kind of Issue",
+	}
+	rawcontentFlag := cli.StringFlag{
+		Name: "raw-content, raw",
+		Usage: "content of Issue",
+	}
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
@@ -131,6 +143,9 @@ func main() {
 					UsageText: "bissucket issue create [command options]",
 					Flags: []cli.Flag{
 						titleFlag,
+						priorityFlag,
+						kindFlag,
+						rawcontentFlag,
 					},
 				},
 			},
