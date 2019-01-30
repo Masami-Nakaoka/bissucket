@@ -45,15 +45,15 @@ func main() {
 		Usage: "Title of Issue.",
 	}
 	priorityFlag := cli.StringFlag{
-		Name: "priority, p",
+		Name:  "priority, p",
 		Usage: "Priority of Issue.",
 	}
 	kindFlag := cli.StringFlag{
-		Name: "kind, k",
+		Name:  "kind, k",
 		Usage: "Kind of Issue",
 	}
 	rawcontentFlag := cli.StringFlag{
-		Name: "raw-content, raw",
+		Name:  "raw-content, raw",
 		Usage: "content of Issue",
 	}
 
@@ -147,6 +147,7 @@ func main() {
 						kindFlag,
 						rawcontentFlag,
 					},
+					Action: Create,
 				},
 			},
 		},
