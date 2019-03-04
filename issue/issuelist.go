@@ -2,7 +2,7 @@ package issue
 
 import (
 	"encoding/json"
-	// "errors"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -120,19 +120,16 @@ var issues *Issues
 
 func IssueList(c *cli.Context) error {
 
-	// if c.NArg() > 1 {
-	// 	return errors.New("Too manu arguments.")
-	// } else if c.NArg() == 0 {
-	// 	fmt.Printf(string(c.NArg()))
-
-	// }
+	if c.String("r") == "" {
+		return errors.New("Please specify the repository to get Issue.")
+	}
 
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
-	repositoryName := c.Args().First()
+	repositoryName := c.String("r")
 
-	res, err := fecthAllIssueFromBitbucket(repositoryName, userName, pass)
+	res, err := fecthRepoIssuesFromBitbucket(repositoryName, userName, pass)
 	if err != nil {
 		return fmt.Errorf("FetchError: %s", err)
 	}
@@ -182,7 +179,7 @@ func IssueList(c *cli.Context) error {
 	return nil
 }
 
-func fecthAllIssueFromBitbucket(repositoryName string, userName string, pass string) (*http.Response, error) {
+func fecthRepoIssuesFromBitbucket(repositoryName string, userName string, pass string) (*http.Response, error) {
 	endPoint := "repositories/" + userName + "/" + repositoryName + "/issues"
 
 	res, err := bitbucket.DoGet(endPoint, userName, pass)

@@ -36,11 +36,11 @@ func main() {
 		Name:  "list, l",
 		Usage: "Show your repository list.",
 	}
-	detailFlag := cli.IntFlag{
-		Name:  "detail, d",
-		Usage: "Display issue details.",
-	}
-	repoNameFlag := cli.stringFlag{
+	// detailFlag := cli.IntFlag{
+	// 	Name:  "detail, d",
+	// 	Usage: "Display issue details.",
+	// }
+	repoNameFlag := cli.StringFlag{
 		Name:  "repository, r",
 		Usage: "Input repository name.",
 	}
