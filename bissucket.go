@@ -40,6 +40,10 @@ func main() {
 		Name:  "detail, d",
 		Usage: "Display issue details.",
 	}
+	repoNameFlag := cli.stringFlag{
+		Name:  "repository, r",
+		Usage: "Input repository name.",
+	}
 	titleFlag := cli.StringFlag{
 		Name:  "title, t",
 		Usage: "Title of Issue.",
@@ -129,13 +133,19 @@ func main() {
 		{
 			Name:      "issue",
 			Aliases:   []string{"i"},
-			Usage:     "Display the issue of a specific repository.",
-			UsageText: "bissucket issue [repository name]",
-			Flags: []cli.Flag{
-				detailFlag,
-			},
-			Action: issue.Issue,
+			Usage:     "Command to operate Issue.",
+			UsageText: "bissucket issue [command][command options]",
 			Subcommands: []cli.Command{
+				{
+					Name:      "list",
+					Aliases:   []string{"l"},
+					Usage:     "Display Issue list of specified Repository",
+					UsageText: "bissucket issue list -r [repository name]",
+					Flags: []cli.Flag{
+						repoNameFlag,
+					},
+					Action: issue.IssueList,
+				},
 				{
 					Name:      "create",
 					Aliases:   []string{"c"},

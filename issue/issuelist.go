@@ -118,7 +118,7 @@ type Issues struct {
 
 var issues *Issues
 
-func Issue(c *cli.Context) error {
+func IssueList(c *cli.Context) error {
 
 	// if c.NArg() > 1 {
 	// 	return errors.New("Too manu arguments.")
