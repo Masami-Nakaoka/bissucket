@@ -6,7 +6,14 @@ import (
 	"net/http"
 )
 
+const (
+	bitbucketURI = "https://api.bitbucket.org/2.0/"
+)
+
 func DoGet(endPoint string, userName string, pass string) (*http.Response, error) {
+
+	endPoint = bitbucketURI + endPoint
+
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
 		return nil, fmt.Errorf("RequestError: %s", err)

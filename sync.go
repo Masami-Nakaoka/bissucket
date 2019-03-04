@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 
+	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 	"github.com/urfave/cli"
 )
 
@@ -107,25 +106,13 @@ func Sync(c *cli.Context) error {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
-	endPoint := bitbucketURI + "repositories/" + userName + "?pagelen=100"
-
-	req, err := http.NewRequest("GET", endPoint, nil)
-	if err != nil {
-		return fmt.Errorf("RequestError: %s", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(userName, pass)
+	endPoint := "repositories/" + userName + "?pagelen=100"
 
 	fmt.Println("Request Set")
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := bitbucket.DoGet(endPoint, userName, pass)
 	if err != nil {
-		return fmt.Errorf("ResponceError: %s", err)
-	}
-
-	if res.StatusCode != 200 {
-		return errors.New(res.Status)
+		return fmt.Errorf("APIError: %s", err)
 	}
 
 	defer res.Body.Close()

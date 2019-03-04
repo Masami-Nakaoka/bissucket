@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	issue "bitbucket.org/Masami_Nakaoka/bissucket/issue"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
@@ -21,7 +22,6 @@ var (
 const (
 	configFileName = ".bissucket.config"
 	configFileType = "json"
-	bitbucketURI   = "https://api.bitbucket.org/2.0/"
 )
 
 func main() {
@@ -134,7 +134,7 @@ func main() {
 			Flags: []cli.Flag{
 				detailFlag,
 			},
-			Action: Issue,
+			Action: issue.Issue,
 			Subcommands: []cli.Command{
 				{
 					Name:      "create",
@@ -147,7 +147,7 @@ func main() {
 						kindFlag,
 						rawcontentFlag,
 					},
-					Action: Create,
+					Action: issue.Create,
 				},
 			},
 		},
