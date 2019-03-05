@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"syscall"
 
+	config "bitbucket.org/Masami_Nakaoka/bissucket/config"
 	issue "bitbucket.org/Masami_Nakaoka/bissucket/issue"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -15,14 +13,13 @@ import (
 )
 
 var (
-	configPath          = os.Getenv("HOME")
 	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
 )
 
-const (
-	configFileName = ".bissucket.config"
-	configFileType = "json"
-)
+// const (
+// 	configFileName = ".bissucket.config"
+// 	configFileType = "json"
+// )
 
 func main() {
 	app := cli.NewApp()
@@ -59,14 +56,14 @@ func main() {
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
-		viper.SetConfigName(configFileName)
-		viper.AddConfigPath(configPath)
-		viper.AddConfigPath(".")
+		// viper.SetConfigName(configFileName)
+		// viper.AddConfigPath(configPath)
+		// viper.AddConfigPath(".")
 
 		var bitbucketUserName string
 		var bitbucketPassword string
 
-		if err := viper.ReadInConfig(); err != nil {
+		if err := config.CheckConfig(); err != nil {
 			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
 			fmt.Println("")
 
@@ -79,21 +76,12 @@ func main() {
 
 			bitbucketPassword = string(pass)
 
-			viper.Set("bitbucketPassword", bitbucketPassword)
-
 			fmt.Println("")
 			fmt.Print("Please enter the user name of Bitbucket: ")
 			fmt.Scan(&bitbucketUserName)
-			viper.Set("bitbucketUserName", bitbucketUserName)
 
-			configJSON, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
-			if err != nil {
-				return fmt.Errorf("JsonMarshalError: %s", err)
-			}
-
-			err = ioutil.WriteFile(filepath.Join(configPath, configFileName+"."+configFileType), configJSON, os.ModePerm)
-			if err != nil {
-				return fmt.Errorf("WriteFileError: %s", err)
+			if err = config.CreateConfigFile(bitbucketUserName, bitbucketPassword); err != nil {
+				return fmt.Errorf("Error: %s", err)
 			}
 
 			fmt.Println("")
@@ -137,10 +125,7 @@ func main() {
 					Aliases:   []string{"l"},
 					Usage:     "Display Issue list of specified Repository",
 					UsageText: "bissucket issue list [repository name]",
-					Flags: []cli.Flag{
-						repoNameFlag,
-					},
-					Action: issue.IssueList,
+					Action:    issue.IssueList,
 				},
 				{
 					Name:      "create",
