@@ -40,10 +40,6 @@ func main() {
 	// 	Name:  "detail, d",
 	// 	Usage: "Display issue details.",
 	// }
-	repoNameFlag := cli.StringFlag{
-		Name:  "repository, r",
-		Usage: "Input repository name.",
-	}
 	titleFlag := cli.StringFlag{
 		Name:  "title, t",
 		Usage: "Title of Issue.",
