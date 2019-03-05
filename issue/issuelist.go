@@ -120,14 +120,21 @@ var issues *Issues
 
 func IssueList(c *cli.Context) error {
 
-	if c.String("r") == "" {
-		return errors.New("Please specify the repository to get Issue.")
+	if c.NArg() > 1 {
+
+		return errors.New("Please input only one argument")
+
+	}
+	if c.Args().First() == "" {
+
+		return errors.New("Please specify the repository to get Issue")
+
 	}
 
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
 
-	repositoryName := c.String("r")
+	repositoryName := c.Args().First()
 
 	res, err := fecthRepoIssuesFromBitbucket(repositoryName, userName, pass)
 	if err != nil {

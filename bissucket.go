@@ -140,7 +140,7 @@ func main() {
 					Name:      "list",
 					Aliases:   []string{"l"},
 					Usage:     "Display Issue list of specified Repository",
-					UsageText: "bissucket issue list -r [repository name]",
+					UsageText: "bissucket issue list [repository name]",
 					Flags: []cli.Flag{
 						repoNameFlag,
 					},
