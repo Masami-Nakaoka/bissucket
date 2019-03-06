@@ -100,7 +100,10 @@ type Repos struct {
 	// Next    string `json:"next"`
 }
 
-var repositories *Repos
+var (
+	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
+	repositories        *Repos
+)
 
 func Sync(c *cli.Context) error {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
