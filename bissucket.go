@@ -7,7 +7,6 @@ import (
 
 	config "bitbucket.org/Masami_Nakaoka/bissucket/config"
 	issue "bitbucket.org/Masami_Nakaoka/bissucket/issue"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -95,9 +94,12 @@ func main() {
 
 		}
 
+		bitbucketUserName = config.GetConfigValueByKey("bitbucketUserName")
+		bitbucketPassword = config.GetConfigValueByKey("bitbucketPassword")
+
 		app.Metadata = map[string]interface{}{
-			"bitbucketUserName": viper.GetString("bitbucketUserName"),
-			"bitbucketPassword": viper.GetString("bitbucketPassword"),
+			"bitbucketUserName": bitbucketUserName,
+			"bitbucketPassword": bitbucketPassword,
 		}
 
 		return nil

@@ -58,3 +58,8 @@ func CreateConfigFile(userName string, pass string) error {
 	return nil
 
 }
+
+func GetConfigValueByKey(key string) (configValue string) {
+	configValue = viper.GetString(key)
+	return
+}
