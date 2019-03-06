@@ -116,6 +116,15 @@ func main() {
 				listFlag,
 			},
 			Action: Repository,
+			Subcommands: []cli.Command{
+				{
+					Name:      "default-set",
+					Aliases:   []string{"df"},
+					Usage:     "Set the default Repository.",
+					UsageText: "bissucket repository default-set [repository name]",
+					Action:    SetDefaultRepository,
+				},
+			},
 		},
 		{
 			Name:      "issue",
