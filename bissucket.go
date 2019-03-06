@@ -29,6 +29,10 @@ func main() {
 		Name:  "list, l",
 		Usage: "Show your repository list.",
 	}
+	repoNameFlag := cli.StringFlag{
+		Name:  "repository, r",
+		Usage: "Specify a repository other than default.",
+	}
 	// detailFlag := cli.IntFlag{
 	// 	Name:  "detail, d",
 	// 	Usage: "Display issue details.",
@@ -132,9 +136,12 @@ func main() {
 				{
 					Name:      "list",
 					Aliases:   []string{"l"},
-					Usage:     "Display Issue list of specified Repository",
-					UsageText: "bissucket issue list [repository name]",
+					Usage:     "Display Issue list of specified Repository.\nIf no option is specified, use the value of defaultRepository",
+					UsageText: "bissucket issue list [command option] [repository name]",
 					Action:    issue.IssueList,
+					Flags: []cli.Flag{
+						repoNameFlag,
+					},
 				},
 				{
 					Name:      "create",

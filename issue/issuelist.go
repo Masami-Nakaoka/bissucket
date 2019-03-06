@@ -123,6 +123,12 @@ func IssueList(c *cli.Context) error {
 
 	repositoryName := config.GetConfigValueByKey("defaultRepository")
 
+	if c.String("r") != "" {
+
+		repositoryName = c.String("r")
+
+	}
+
 	if repositoryName == "" {
 
 		fmt.Println("")
