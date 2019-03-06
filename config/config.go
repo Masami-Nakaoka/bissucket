@@ -40,8 +40,6 @@ func CheckConfig() error {
 
 func CreateConfigFile(userName string, pass string) error {
 
-	setConfigPath()
-
 	viper.Set("bitbucketUserName", userName)
 	viper.Set("bitbucketPassword", pass)
 
@@ -50,7 +48,7 @@ func CreateConfigFile(userName string, pass string) error {
 		return fmt.Errorf("JsonMarshalError: %s", err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(configPath, configFileName+"."+configPath), configJson, os.ModePerm)
+	err = ioutil.WriteFile(filepath.Join(configPath, configFileName+"."+configFileType), configJson, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("WriteFileError: %s", err)
 	}

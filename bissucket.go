@@ -63,7 +63,7 @@ func main() {
 		var bitbucketPassword string
 
 		if err := config.CheckConfig(); err != nil {
-			fmt.Println("Error: No configfile was found. We will start initial setting from now.")
+			fmt.Println("Error: No configfile was found. \nWe will start initial setting from now.")
 			fmt.Println("")
 
 			fmt.Print("Please enter the password of Bitbucket: ")
@@ -85,6 +85,7 @@ func main() {
 
 			fmt.Println("")
 			fmt.Println("Creation of config file succeeded.")
+			fmt.Println("")
 			fmt.Println("Enter the following command for Bitbucket's Synchronize the repository.")
 			fmt.Println("")
 			fmt.Println("bissucket sync")
