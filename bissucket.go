@@ -5,8 +5,8 @@ import (
 	"os"
 	"syscall"
 
-	config "bitbucket.org/Masami_Nakaoka/bissucket/config"
-	issue "bitbucket.org/Masami_Nakaoka/bissucket/issue"
+	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	"bitbucket.org/Masami_Nakaoka/bissucket/issue"
 	repo "bitbucket.org/Masami_Nakaoka/bissucket/repository"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
@@ -125,6 +125,12 @@ func main() {
 					UsageText: "bissucket repository default-set [repository name]",
 					Action:    repo.SetDefaultRepository,
 				},
+				{
+					Name:      "sync",
+					Usage:     "Synchronize with Bitbucket's repository.",
+					UsageText: "bissucket repository sync",
+					Action:    repo.Sync,
+				},
 			},
 		},
 		{
@@ -144,6 +150,12 @@ func main() {
 					},
 				},
 				{
+					Name:      "sync",
+					Usage:     "Synchronize with Issue of defaultRepository.",
+					UsageText: "bissucket issue sync",
+					Action:    issue.Sync,
+				},
+				{
 					Name:      "create",
 					Aliases:   []string{"c"},
 					Usage:     "Create an issue.",
@@ -157,12 +169,6 @@ func main() {
 					Action: issue.Create,
 				},
 			},
-		},
-		{
-			Name:      "sync",
-			Usage:     "Get your repository from Bitbucket.",
-			UsageText: "bissucket sync",
-			Action:    Sync,
 		},
 	}
 
