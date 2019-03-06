@@ -7,12 +7,9 @@ import (
 
 	config "bitbucket.org/Masami_Nakaoka/bissucket/config"
 	issue "bitbucket.org/Masami_Nakaoka/bissucket/issue"
+	repo "bitbucket.org/Masami_Nakaoka/bissucket/repository"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
-)
-
-var (
-	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
 )
 
 // const (
@@ -115,7 +112,16 @@ func main() {
 			Flags: []cli.Flag{
 				listFlag,
 			},
-			Action: Repository,
+			Action: repo.RepositoryList,
+			Subcommands: []cli.Command{
+				{
+					Name:      "default-set",
+					Aliases:   []string{"df"},
+					Usage:     "Set the default Repository.",
+					UsageText: "bissucket repository default-set [repository name]",
+					Action:    repo.SetDefaultRepository,
+				},
+			},
 		},
 		{
 			Name:      "issue",

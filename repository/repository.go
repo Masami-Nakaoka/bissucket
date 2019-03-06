@@ -1,4 +1,4 @@
-package main
+package repository
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 	"github.com/urfave/cli"
 )
 
@@ -105,47 +104,32 @@ var (
 	repositories        *Repos
 )
 
-func Sync(c *cli.Context) error {
-	userName := c.App.Metadata["bitbucketUserName"].(string)
-	pass := c.App.Metadata["bitbucketPassword"].(string)
-
-	endPoint := "repositories/" + userName + "?pagelen=100"
-
-	fmt.Println("Request Set")
-
-	res, err := bitbucket.DoGet(endPoint, userName, pass)
-	if err != nil {
-		return fmt.Errorf("APIError: %s", err)
-	}
-
-	defer res.Body.Close()
-
-	err = json.NewDecoder(res.Body).Decode(&repositories)
-	if err != nil {
-		return fmt.Errorf("JsonDecodeError: %s", err)
-	}
-
-	err = saveRepositoryInCache(repositoryCachePath, repositories)
-	if err != nil {
-		return fmt.Errorf("saveRepositoryError: %s", err)
+func RepositoryList(c *cli.Context) error {
+	if c.Bool("l") {
+		err := showRepositoryList(repositoryCachePath)
+		if err != nil {
+			return fmt.Errorf("showRepositoryListError: %s", err)
+		}
 	}
 
 	return nil
 }
 
-func saveRepositoryInCache(filename string, r *Repos) error {
-	buf, err := json.MarshalIndent(r, "", "    ")
+func showRepositoryList(filename string) error {
+	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return fmt.Errorf("JsonMarshallError: %s", err)
+		return fmt.Errorf("fileReadError: %s", err)
 	}
 
-	err = ioutil.WriteFile(filename, buf, os.ModePerm)
-	if err != nil {
-		return fmt.Errorf("WriteFileError: %s", err)
+	err = json.Unmarshal(buf, &repositories)
+
+	fmt.Println("-----------------------\n  Repository Name  \n-----------------------")
+
+	for _, repo := range repositories.Values {
+		fmt.Printf("%s\n", repo.Name)
 	}
 
-	fmt.Println("Sync sucess")
+	fmt.Println("")
 
 	return nil
-
 }
