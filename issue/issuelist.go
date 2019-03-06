@@ -2,12 +2,13 @@ package issue
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
+	"bitbucket.org/Masami_Nakaoka/bissucket/config"
 	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 
 	"github.com/urfave/cli"
@@ -120,21 +121,29 @@ var issues *Issues
 
 func IssueList(c *cli.Context) error {
 
-	if c.NArg() > 1 {
+	repositoryName := config.GetConfigValueByKey("defaultRepository")
 
-		return errors.New("Please input only one argument")
+	if c.String("r") != "" {
+
+		repositoryName = c.String("r")
 
 	}
-	if c.Args().First() == "" {
 
-		return errors.New("Please specify the repository to get Issue")
+	if repositoryName == "" {
+
+		fmt.Println("")
+		fmt.Println("defaultRepository is not set.")
+		fmt.Println("Execute the following command first and set defaultRepository.")
+		fmt.Println("")
+		fmt.Println("bissucket repository default-set [repository name]")
+		fmt.Println("")
+
+		os.Exit(0)
 
 	}
 
 	userName := c.App.Metadata["bitbucketUserName"].(string)
 	pass := c.App.Metadata["bitbucketPassword"].(string)
-
-	repositoryName := c.Args().First()
 
 	res, err := fecthRepoIssuesFromBitbucket(repositoryName, userName, pass)
 	if err != nil {
