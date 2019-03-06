@@ -1,45 +1,85 @@
-// package config
+package config
 
-// import (
-// 	"os"
-// 	"github.com/spf13/viper"
-// )
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
-// var (
-// 	configPath          = os.Getenv("HOME")
-// 	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
-// )
+	"github.com/spf13/viper"
+)
 
-// const (
-// 	configFileName = ".bissucket.config"
-// 	configFileType = "json"
-// )
+var (
+	configPath          = os.Getenv("HOME")
+	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
+)
 
-// func CheckConfig() {
-// 	viper.SetConfigName(configFileName)
-// 	viper.AddConfigPath(configPath)
-// 	viper.AddConfigPath(".")
+const (
+	configFileName = ".bissucket.config"
+	configFileType = "json"
+)
 
-// 	if err != viper.ReadConfig(); err != nil {
-// 		fmt.Println("Error: No configfile was found. We will start initial setting from now.")
-// 		fmt.Println("")
+func setConfigPath() {
+	viper.SetConfigName(configFileName)
+	viper.AddConfigPath(configPath)
+	viper.AddConfigPath(".")
+}
 
-// 		fmt.Print("Please enter the password of Bitbucket: ")
+func CheckConfig() error {
 
-// 		pass, err := terminal.ReadPassword(int(syscall.Stdin))
-// 		if err != nil {
-// 			return fmt.Errorf("ReadPasswordError: %s", err)
-// 		}
+	setConfigPath()
 
-// 		bitbucketPassword = string(pass)
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
 
-// 		viper.Set("bitbucketPassword", bitbucketPassword)
+	return nil
 
-// 		fmt.Println("")
-// 		fmt.Print("Please enter the user name of Bitbucket: ")
-// 		fmt.Scan(&bitbucketUserName)
-// 		viper.Set("bitbucketUserName", bitbucketUserName)
+}
 
-// 	}
+func GetConfigValueByKey(key string) (configValue string) {
+	configValue = viper.GetString(key)
+	return
+}
 
-// }
+func SetConfigKeyAndValue(key string, value string) error {
+
+	viper.Set(key, value)
+
+	err := writeConfigFile()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateConfigFile(userName string, pass string) error {
+
+	viper.Set("bitbucketUserName", userName)
+	viper.Set("bitbucketPassword", pass)
+
+	err := writeConfigFile()
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func writeConfigFile() error {
+
+	configJson, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
+	if err != nil {
+		return fmt.Errorf("JsonMarshalError: %s", err)
+	}
+
+	err = ioutil.WriteFile(filepath.Join(configPath, configFileName+"."+configFileType), configJson, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("WriteFileError: %s", err)
+	}
+
+	return nil
+}
