@@ -107,7 +107,7 @@ func main() {
 		{
 			Name:      "repository",
 			Aliases:   []string{"repo"},
-			Usage:     "Repository related operations. Currently only list view.",
+			Usage:     "Display a list of repositories or set a default repository.",
 			UsageText: "bissucket repository --list",
 			Flags: []cli.Flag{
 				listFlag,
