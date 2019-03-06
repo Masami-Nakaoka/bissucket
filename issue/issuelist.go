@@ -3,6 +3,7 @@ package issue
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -121,40 +122,59 @@ var issues *Issues
 
 func IssueList(c *cli.Context) error {
 
-	repositoryName := config.GetConfigValueByKey("defaultRepository")
+	var repositoryName string
 
 	if c.String("r") != "" {
 
+		userName := c.App.Metadata["bitbucketUserName"].(string)
+		pass := c.App.Metadata["bitbucketPassword"].(string)
 		repositoryName = c.String("r")
 
-	}
+		res, err := fecthRepoIssuesFromBitbucket(repositoryName, userName, pass)
+		if err != nil {
+			return fmt.Errorf("APIError: %s", err)
+		}
 
-	if repositoryName == "" {
+		defer res.Body.Close()
 
-		fmt.Println("")
-		fmt.Println("defaultRepository is not set.")
-		fmt.Println("Execute the following command first and set defaultRepository.")
-		fmt.Println("")
-		fmt.Println("bissucket repository default-set [repository name]")
-		fmt.Println("")
+		err = json.NewDecoder(res.Body).Decode(&issues)
+		if err != nil {
+			return fmt.Errorf("JsonDecodeError: %s", err)
+		}
 
-		os.Exit(0)
+	} else {
 
-	}
+		repositoryName := config.GetConfigValueByKey("defaultRepository")
 
-	userName := c.App.Metadata["bitbucketUserName"].(string)
-	pass := c.App.Metadata["bitbucketPassword"].(string)
+		if repositoryName == "" {
 
-	res, err := fecthRepoIssuesFromBitbucket(repositoryName, userName, pass)
-	if err != nil {
-		return fmt.Errorf("FetchError: %s", err)
-	}
+			fmt.Println("")
+			fmt.Println("defaultRepository is not set.")
+			fmt.Println("Execute the following command first and set defaultRepository.")
+			fmt.Println("")
+			fmt.Println("bissucket repository default-set [repository name]")
+			fmt.Println("")
 
-	defer res.Body.Close()
+			os.Exit(0)
 
-	err = json.NewDecoder(res.Body).Decode(&issues)
-	if err != nil {
-		return fmt.Errorf("DecodeError: %s", err)
+		}
+
+		buf, err := ioutil.ReadFile(issueCacheFilePath)
+		if err != nil {
+			fmt.Printf("ReadFileError: %s\n", err)
+			fmt.Println("")
+			fmt.Println("Please execute Issue by executing the following command.")
+			fmt.Println("")
+			fmt.Println("bissucket issue sync")
+			fmt.Println("")
+
+			os.Exit(0)
+		}
+
+		err = json.Unmarshal(buf, &issues)
+		if err != nil {
+			return fmt.Errorf("JsonUnmarshallError: %s", err)
+		}
 	}
 
 	if c.Int("d") > 0 {
