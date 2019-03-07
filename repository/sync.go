@@ -12,13 +12,12 @@ import (
 
 func Sync(c *cli.Context) error {
 	userName := c.App.Metadata["bitbucketUserName"].(string)
-	pass := c.App.Metadata["bitbucketPassword"].(string)
 
 	endPoint := "repositories/" + userName + "?pagelen=100"
 
 	fmt.Println("Start synchronization")
 
-	res, err := bitbucket.DoGet(endPoint, userName, pass)
+	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
 		return fmt.Errorf("APIError: %s", err)
 	}
