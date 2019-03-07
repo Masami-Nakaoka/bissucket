@@ -29,9 +29,17 @@ func main() {
 		Name:  "list, l",
 		Usage: "Show your repository list.",
 	}
-	repoNameFlag := cli.StringFlag{
+	repoFlag := cli.BoolFlag{
 		Name:  "repository, r",
-		Usage: "Specify a repository other than default.",
+		Usage: "Flag for declaring the operation of the repository.",
+	}
+	repoNameFlag := cli.StringFlag{
+		Name:  "repository-name, rn",
+		Usage: "Flag when specifying `repository name`",
+	}
+	issueFlag := cli.BoolFlag{
+		Name:  "issue, i",
+		Usage: "Flag for declaring the operation of the issue.",
 	}
 	// detailFlag := cli.IntFlag{
 	// 	Name:  "detail, d",
@@ -108,6 +116,16 @@ func main() {
 	}
 
 	app.Commands = []cli.Command{
+		{
+			Name:      "sync",
+			Usage:     "Synchronize with Bitbucket's repository and issue.",
+			UsageText: "bissucket sync [--repository, -r][--issue, -i]",
+			Action:    Sync,
+			Flags: []cli.Flag{
+				repoFlag,
+				issueFlag,
+			},
+		},
 		{
 			Name:      "repository",
 			Aliases:   []string{"repo"},
