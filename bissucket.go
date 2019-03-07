@@ -12,11 +12,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
-// const (
-// 	configFileName = ".bissucket.config"
-// 	configFileType = "json"
-// )
-
 func main() {
 	app := cli.NewApp()
 	app.Name = "bissucket"
@@ -64,9 +59,6 @@ func main() {
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
-		// viper.SetConfigName(configFileName)
-		// viper.AddConfigPath(configPath)
-		// viper.AddConfigPath(".")
 
 		var bitbucketUserName string
 		var bitbucketPassword string

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,11 +12,15 @@ import (
 	"github.com/urfave/cli"
 )
 
-const homePath = os.Getenv("HOME")
-
 var (
+	homePath            = os.Getenv("HOME")
 	issueCachePath      = homePath + "/.bissucket.issuecache.json"
 	repositoryCachePath = homePath + "/.bitbucket.repositorycache.json"
+)
+
+var (
+	issues *bitbucket.Issues
+	repos  *bitbucket.Repos
 )
 
 func saveIssuesInCache(issue *bitbucket.Issues) error {
@@ -25,7 +30,22 @@ func saveIssuesInCache(issue *bitbucket.Issues) error {
 		return fmt.Errorf("JsonMarshallError: $s", err)
 	}
 
-	err = ioutil.WriteFile(issueCachePath, issue, os.ModePerm)
+	err = ioutil.WriteFile(issueCachePath, buf, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("WriteFileError: %s", err)
+	}
+
+	return nil
+}
+
+func saveRepositoryInCache(r *bitbucket.Repos) error {
+
+	buf, err := json.MarshalIndent(r, "", "    ")
+	if err != nil {
+		return fmt.Errorf("JsonMarshallError: $s", err)
+	}
+
+	err = ioutil.WriteFile(repositoryCachePath, buf, os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("WriteFileError: %s", err)
 	}
@@ -36,7 +56,8 @@ func saveIssuesInCache(issue *bitbucket.Issues) error {
 func fetchIssuesByDefaultRepository() error {
 
 	userName := config.GetConfigValueByKey("bitbucketUserName")
-	endPoint := "repositories/" + userName + "/" + repositoryName + "/issues"
+	defaultRepository := config.GetConfigValueByKey("defaultRepository")
+	endPoint := "repositories/" + userName + "/" + defaultRepository + "/issues"
 
 	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
@@ -45,12 +66,37 @@ func fetchIssuesByDefaultRepository() error {
 
 	defer res.Body.Close()
 
-	err = json.NewDecoder(res.Body).Docode(&bitbucket.Issues)
+	err = json.NewDecoder(res.Body).Decode(&issues)
 	if err != nil {
 		return fmt.Errorf("DecodeError: %s", err)
 	}
 
-	err = saveIssuesInCache(bitbucket.Issues)
+	err = saveIssuesInCache(issues)
+	if err != nil {
+		return fmt.Errorf("CacheSaveError: %s", err)
+	}
+
+	return nil
+}
+
+func fetchAllRepository() error {
+
+	userName := config.GetConfigValueByKey("bitbucketUserName")
+	endPoint := "repositories/" + userName + "?pagelen=100"
+
+	res, err := bitbucket.DoGet(endPoint, userName)
+	if err != nil {
+		return fmt.Errorf("fetchError: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	err = json.NewDecoder(res.Body).Decode(&repos)
+	if err != nil {
+		return fmt.Errorf("DecodeError: %s", err)
+	}
+
+	err = saveRepositoryInCache(repos)
 	if err != nil {
 		return fmt.Errorf("CacheSaveError: %s", err)
 	}
@@ -62,10 +108,20 @@ func Sync(c *cli.Context) error {
 
 	if c.Bool("i") {
 
-		fetchIssuesByDefaultRepository()
+		err := fetchIssuesByDefaultRepository()
+		if err != nil {
+			return fmt.Errorf("FetchError: %s", err)
+		}
 
-		return nil
+	} else if c.Bool("r") {
 
+		err := fetchAllRepository()
+		if err != nil {
+			return fmt.Errorf("FetchError: %s", err)
+		}
+
+	} else if !c.Bool("i") && !c.Bool("r") {
+		return errors.New("Specify one option and execute.")
 	}
 
 	return nil
