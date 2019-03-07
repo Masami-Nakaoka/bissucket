@@ -119,6 +119,16 @@ func main() {
 			},
 		},
 		{
+			Name:      "list",
+			Usage:     "Display Issue and list of repositories. Display a list of defaultRepository if no options are given.",
+			UsageText: "bissucket list [--repository, -r] [--repository-name REPOSITORY NAME, -rn REPOSITOORY NAME]",
+			Action:    List,
+			Flags: []cli.Flag{
+				repoFlag,
+				repoNameFlag,
+			},
+		},
+		{
 			Name:      "repository",
 			Aliases:   []string{"repo"},
 			Usage:     "Display a list of repositories or set a default repository.",
