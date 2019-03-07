@@ -31,14 +31,13 @@ func saveIssuesInCache(filePath string, issue *Issues) error {
 func Sync(c *cli.Context) error {
 
 	userName := c.App.Metadata["bitbucketUserName"].(string)
-	pass := c.App.Metadata["bitbucketPassword"].(string)
 	repositoryName := config.GetConfigValueByKey("defaultRepository")
 
 	endPoint := "repositories/" + userName + "/" + repositoryName + "/issues"
 
 	fmt.Println("Start Issue sync.")
 
-	res, err := bitbucket.DoGet(endPoint, userName, pass)
+	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
 		return fmt.Errorf("APIError: %s", err)
 	}

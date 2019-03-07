@@ -218,7 +218,7 @@ func IssueList(c *cli.Context) error {
 func fecthRepoIssuesFromBitbucket(repositoryName string, userName string, pass string) (*http.Response, error) {
 	endPoint := "repositories/" + userName + "/" + repositoryName + "/issues"
 
-	res, err := bitbucket.DoGet(endPoint, userName, pass)
+	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
 		return nil, fmt.Errorf("APIError: %s", err)
 	}
