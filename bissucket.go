@@ -145,12 +145,6 @@ func main() {
 					UsageText: "bissucket repository default-set [repository name]",
 					Action:    repo.SetDefaultRepository,
 				},
-				{
-					Name:      "sync",
-					Usage:     "Synchronize with Bitbucket's repository.",
-					UsageText: "bissucket repository sync",
-					Action:    repo.Sync,
-				},
 			},
 		},
 		{
@@ -159,22 +153,6 @@ func main() {
 			Usage:     "Command to operate Issue.",
 			UsageText: "bissucket issue [command][command options]",
 			Subcommands: []cli.Command{
-				{
-					Name:      "list",
-					Aliases:   []string{"l"},
-					Usage:     "Display Issue list of specified Repository.\nIf no option is specified, use the value of defaultRepository",
-					UsageText: "bissucket issue list [command option] [repository name]",
-					Action:    issue.IssueList,
-					Flags: []cli.Flag{
-						repoNameFlag,
-					},
-				},
-				{
-					Name:      "sync",
-					Usage:     "Synchronize with Issue of defaultRepository.",
-					UsageText: "bissucket issue sync",
-					Action:    issue.Sync,
-				},
 				{
 					Name:      "create",
 					Aliases:   []string{"c"},

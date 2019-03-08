@@ -23,7 +23,7 @@ func saveIssuesInCache(issue *bitbucket.Issues) error {
 
 	buf, err := json.MarshalIndent(issue, "", "    ")
 	if err != nil {
-		return fmt.Errorf("JsonMarshallError: $s", err)
+		return fmt.Errorf("JsonMarshallError: %s", err)
 	}
 
 	err = ioutil.WriteFile(issueCachePath, buf, os.ModePerm)

@@ -4,45 +4,89 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 
 	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 	"github.com/urfave/cli"
 )
 
-func showList(target string) error {
-	return nil
+func showIssueList(repositoryName string, issues *bitbucket.Issues) {
+
+	fmt.Println("------------------------------")
+	fmt.Println("Issue List of " + repositoryName)
+	fmt.Println("------------------------------")
+	fmt.Println("ID / State / Priority / Kind / Assignee / Title")
+
+	var issueTemplate string
+	for _, issue := range issues.Values {
+		issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username + " / " + issue.Title
+		fmt.Println(issueTemplate)
+	}
 }
 
-func getIssueByDefauleRepository() ([]byte, error) {
-	issueCachePath := config.GetConfigValueByKey("issueCachePath")
+func showRepositoryList(repos *bitbucket.Repos) {
 
-	return ioutil.ReadFile(issueCachePath)
+	fmt.Println("-----------------------\n  Repository Name  \n-----------------------")
+
+	for _, repo := range repos.Values {
+		fmt.Printf("%s\n", repo.Name)
+	}
+
+	fmt.Println("")
+
+}
+
+func getListByCache(target string) ([]byte, error) {
+	cachePath := config.GetConfigValueByKey(target + "CachePath")
+
+	return ioutil.ReadFile(cachePath)
 
 }
 
 func List(c *cli.Context) error {
 
-	var buf []byte
+	var (
+		buf []byte
+		err error
+	)
 
-	listTarget := "issue"
+	if c.Bool("r") {
 
-	if c.String("rn") {
-
-		// repositoryName := c.String("rn")
-	} else {
-
-		buf, err := getIssueByDefauleRepository()
+		buf, err = getListByCache("repository")
 		if err != nil {
 			return err
 		}
 
-	}
+		if err = json.Unmarshal(buf, &repos); err != nil {
+			return fmt.Errorf("jsonUnMarshallErrror: %s", err)
+		}
 
-	if err = json.Unmarshal(buf, &issues); err != nil {
-		return fmt.Errorf("jsonUnMarshallErrror: %s", err)
-	}
+		showRepositoryList(repos)
 
-	showList(listTarget)
+	} else {
+
+		repositoryName := config.GetConfigValueByKey("defaultRepository")
+
+		if c.String("rn") != "" {
+
+			// repositoryName := c.String("rn")
+		} else {
+
+			buf, err = getListByCache("issue")
+			if err != nil {
+				return err
+			}
+
+		}
+
+		if err = json.Unmarshal(buf, &issues); err != nil {
+			return fmt.Errorf("jsonUnMarshallErrror: %s", err)
+		}
+
+		showIssueList(repositoryName, issues)
+
+	}
 
 	return nil
 }
