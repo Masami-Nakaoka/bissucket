@@ -13,17 +13,13 @@ import (
 )
 
 var (
-	homePath            = os.Getenv("HOME")
-	issueCachePath      = homePath + "/.bissucket.issuecache.json"
-	repositoryCachePath = homePath + "/.bitbucket.repositorycache.json"
-)
-
-var (
 	issues *bitbucket.Issues
 	repos  *bitbucket.Repos
 )
 
 func saveIssuesInCache(issue *bitbucket.Issues) error {
+
+	issueCachePath := config.GetConfigValueByKey("issueCachePath")
 
 	buf, err := json.MarshalIndent(issue, "", "    ")
 	if err != nil {
@@ -39,6 +35,8 @@ func saveIssuesInCache(issue *bitbucket.Issues) error {
 }
 
 func saveRepositoryInCache(r *bitbucket.Repos) error {
+
+	repositoryCachePath := config.GetConfigValueByKey("repositoryCachePath")
 
 	buf, err := json.MarshalIndent(r, "", "    ")
 	if err != nil {
