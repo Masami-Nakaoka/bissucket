@@ -44,6 +44,28 @@ func getListByCache(target string) ([]byte, error) {
 
 }
 
+func getIssueListByRepositoryName(repoName string) ([]byte, error) {
+
+	userName := config.GetConfigValueByKey("bitbucketUserName")
+	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
+
+	res, err := bitbucket.DoGet(endPoint, userName)
+	if err != nil {
+		return nil, fmt.Errorf("FetchError: %s", err)
+	}
+
+	defer res.Body.Close()
+
+	var issues *bitbucket.Issues
+
+	if err = json.NewDecoder(res.Body).Decode(&issues); err != nil {
+		return nil, fmt.Errorf("JsonDecodeError: %s", err)
+	}
+
+	return json.MarshalIndent(issues, "", "    ")
+
+}
+
 func List(c *cli.Context) error {
 
 	var (
@@ -66,18 +88,24 @@ func List(c *cli.Context) error {
 
 	} else {
 
-		repositoryName := config.GetConfigValueByKey("defaultRepository")
+		var repositoryName string
 
 		if c.String("rn") != "" {
 
-			// repositoryName := c.String("rn")
+			repositoryName = c.String("rn")
+
+			buf, err = getIssueListByRepositoryName(repositoryName)
+
 		} else {
 
-			buf, err = getListByCache("issue")
-			if err != nil {
-				return err
-			}
+			repositoryName = config.GetConfigValueByKey("defaultRepository")
 
+			buf, err = getListByCache("issue")
+
+		}
+
+		if err != nil {
+			return err
 		}
 
 		if err = json.Unmarshal(buf, &issues); err != nil {
