@@ -73,9 +73,15 @@ func CreateConfigFile(userName string, pass string) error {
 
 }
 
+func GetAllConfigKeyAndValue() ([]byte, error) {
+
+	return json.MarshalIndent(viper.AllSettings(), "", "    ")
+
+}
+
 func writeConfigFile() error {
 
-	configJson, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
+	configJson, err := GetAllConfigKeyAndValue()
 	if err != nil {
 		return fmt.Errorf("JsonMarshalError: %s", err)
 	}
