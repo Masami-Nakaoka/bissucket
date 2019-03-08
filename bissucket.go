@@ -129,6 +129,12 @@ func main() {
 			},
 		},
 		{
+			Name:      "config",
+			Usage:     "Command to set bissucket related operations. If there is no argument, display a list of settings.",
+			UsageText: "bissucket config",
+			Action:    Config,
+		},
+		{
 			Name:      "repository",
 			Aliases:   []string{"repo"},
 			Usage:     "Display a list of repositories or set a default repository.",
