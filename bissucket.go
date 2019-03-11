@@ -142,6 +142,12 @@ func main() {
 			},
 		},
 		{
+			Name:      "show",
+			Usage:     "Display Issue details of defaultRepository.",
+			UsageText: "bissucket show [issue id]",
+			Action:    Show,
+		},
+		{
 			Name:      "repository",
 			Aliases:   []string{"repo"},
 			Usage:     "Display a list of repositories or set a default repository.",
