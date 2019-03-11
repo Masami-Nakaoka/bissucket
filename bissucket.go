@@ -36,6 +36,10 @@ func main() {
 		Name:  "issue, i",
 		Usage: "Flag for declaring the operation of the issue.",
 	}
+	setFlag := cli.StringFlag{
+		Name:  "set, s",
+		Usage: "Flag for registering or changing settings.",
+	}
 	// detailFlag := cli.IntFlag{
 	// 	Name:  "detail, d",
 	// 	Usage: "Display issue details.",
@@ -133,6 +137,9 @@ func main() {
 			Usage:     "Command to set bissucket related operations. If there is no argument, display a list of settings.",
 			UsageText: "bissucket config",
 			Action:    Config,
+			Flags: []cli.Flag{
+				setFlag,
+			},
 		},
 		{
 			Name:      "repository",
