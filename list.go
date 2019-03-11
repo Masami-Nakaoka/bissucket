@@ -27,10 +27,12 @@ func showIssueList(repositoryName string, issues *bitbucket.Issues) {
 
 func showRepositoryList(repos *bitbucket.Repos) {
 
-	fmt.Println("-----------------------\n  Repository Name  \n-----------------------")
+	fmt.Println("---------------------------------")
+	fmt.Println("Repository Name  /  Has Issues")
+	fmt.Println("---------------------------------")
 
 	for _, repo := range repos.Values {
-		fmt.Printf("%s\n", repo.Name)
+		fmt.Printf("%s  /  %t\n", repo.Name, repo.HasIssues)
 	}
 
 	fmt.Println("")
