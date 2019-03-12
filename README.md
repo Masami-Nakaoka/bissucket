@@ -7,7 +7,7 @@ bissucket is a tool to manipulate Bitbucket Issue from the CLI.
 ```shell
 NAME:
    bissucket - bissucket is a tool to manipulate Bitbucket Issue from the CLI.
-    First from [bissucket sync] please.
+   First from [bissucket sync --repository] please.
 
 USAGE:
    bissucket [global options] command [command options] [arguments...]
@@ -32,7 +32,9 @@ GLOBAL OPTIONS:
 If you have installed Golang:
 
 ```shell
-go get -u github.com/Masami-Nakaoka/bissucket
+go get -u github.com/namahu/bissucket
+cd $GOPATH/src/namahu/bissucket
+go install
 ```
 
 ## After installation
@@ -57,14 +59,14 @@ $HOME/.bissucket.repositoriescache.json
 I will investigate whether it can be realized.
 
 - Command add
-    - issue create
-    - issue complete
-    - add comment
-    - etc...
+  - issue create
+  - issue complete
+  - add comment
+  - etc...
 
 ## Author
 
-Masami-Nakaoka
+namahu
 
 ## License
 
