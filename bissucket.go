@@ -6,8 +6,6 @@ import (
 	"syscall"
 
 	"bitbucket.org/Masami_Nakaoka/bissucket/config"
-	"bitbucket.org/Masami_Nakaoka/bissucket/issue"
-	repo "bitbucket.org/Masami_Nakaoka/bissucket/repository"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -20,10 +18,6 @@ func main() {
 	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI.\n    First from [bissucket sync] please."
 	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
-	listFlag := cli.BoolFlag{
-		Name:  "list, l",
-		Usage: "Show your repository list.",
-	}
 	repoFlag := cli.BoolFlag{
 		Name:  "repository, r",
 		Usage: "Flag for declaring the operation of the repository.",
@@ -40,26 +34,22 @@ func main() {
 		Name:  "set, s",
 		Usage: "Flag for registering or changing settings.",
 	}
-	// detailFlag := cli.IntFlag{
-	// 	Name:  "detail, d",
-	// 	Usage: "Display issue details.",
+	// titleFlag := cli.StringFlag{
+	// 	Name:  "title, t",
+	// 	Usage: "Title of Issue.",
 	// }
-	titleFlag := cli.StringFlag{
-		Name:  "title, t",
-		Usage: "Title of Issue.",
-	}
-	priorityFlag := cli.StringFlag{
-		Name:  "priority, p",
-		Usage: "Priority of Issue.",
-	}
-	kindFlag := cli.StringFlag{
-		Name:  "kind, k",
-		Usage: "Kind of Issue",
-	}
-	rawcontentFlag := cli.StringFlag{
-		Name:  "raw-content, raw",
-		Usage: "content of Issue",
-	}
+	// priorityFlag := cli.StringFlag{
+	// 	Name:  "priority, p",
+	// 	Usage: "Priority of Issue.",
+	// }
+	// kindFlag := cli.StringFlag{
+	// 	Name:  "kind, k",
+	// 	Usage: "Kind of Issue",
+	// }
+	// rawcontentFlag := cli.StringFlag{
+	// 	Name:  "raw-content, raw",
+	// 	Usage: "content of Issue",
+	// }
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
@@ -147,46 +137,11 @@ func main() {
 			UsageText: "bissucket show [issue id]",
 			Action:    Show,
 		},
-		{
-			Name:      "repository",
-			Aliases:   []string{"repo"},
-			Usage:     "Display a list of repositories or set a default repository.",
-			UsageText: "bissucket repository --list",
-			Flags: []cli.Flag{
-				listFlag,
-			},
-			Action: repo.RepositoryList,
-			Subcommands: []cli.Command{
-				{
-					Name:      "default-set",
-					Aliases:   []string{"df"},
-					Usage:     "Set the default Repository.",
-					UsageText: "bissucket repository default-set [repository name]",
-					Action:    repo.SetDefaultRepository,
-				},
-			},
-		},
-		{
-			Name:      "issue",
-			Aliases:   []string{"i"},
-			Usage:     "Command to operate Issue.",
-			UsageText: "bissucket issue [command][command options]",
-			Subcommands: []cli.Command{
-				{
-					Name:      "create",
-					Aliases:   []string{"c"},
-					Usage:     "Create an issue.",
-					UsageText: "bissucket issue create [command options]",
-					Flags: []cli.Flag{
-						titleFlag,
-						priorityFlag,
-						kindFlag,
-						rawcontentFlag,
-					},
-					Action: issue.Create,
-				},
-			},
-		},
+		// {
+		// 	Name: "create",
+		// 	Usage: "Create the new issue.",
+		// 	UsageText: "bissucket create "
+		// },
 	}
 
 	if err := app.Run(os.Args); err != nil {
