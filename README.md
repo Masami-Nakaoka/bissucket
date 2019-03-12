@@ -16,10 +16,11 @@ VERSION:
    0.1.1
 
 COMMANDS:
-     repository, repo  Repository related operations. Currently only list view.
-     issue, i          Display the issue of a specific repository.
-     sync              Get your repository from Bitbucket.
-     help, h           Shows a list of commands or help for one command
+   sync     Synchronize with Bitbucket\'s repository and issue.
+   list     Display Issue and list of repositories. Display a list of defaultRepository if no options are given.
+   config   Command to set bissucket related operations. If there is no argument, display a list of settings.
+   show     Display Issue details of defaultRepository.
+   help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h     show help
@@ -31,19 +32,18 @@ GLOBAL OPTIONS:
 If you have installed Golang:
 
 ```shell
-go get -u bitbucket.org/Masami_Nakaoka/bissucket
+go get -u github.com/Masami-Nakaoka/bissucket
 ```
-
-Or download from [here](https://bitbucket.org/Masami_Nakaoka/bissucket/downloads/).
 
 ## After installation
 
-When you execute the command for the first time, you need to enter the user name and password of Bitbucket.
+When you execute the command for the first time,  
+you need to enter the user name and password of Bitbucket.
 
 Next, execute the following command to obtain a list of repositories.
 
 ```shell
-bissucket sync
+bissucket sync --repository
 ```
 
 The list of repositories is stored in the following location:
@@ -64,7 +64,7 @@ I will investigate whether it can be realized.
 
 ## Author
 
-Masami Nakaoka
+Masami-Nakaoka
 
 ## License
 

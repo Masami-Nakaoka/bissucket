@@ -12,7 +12,8 @@ import (
 
 var (
 	configPath          = os.Getenv("HOME")
-	repositoryCachePath = os.Getenv("HOME") + "/.bissucket.repositoriescache.json"
+	repositoryCachePath = configPath + "/.bissucket.repositoriescache.json"
+	issueCachePath      = configPath + "/.bissucket.issuecache.json"
 )
 
 const (
@@ -60,6 +61,9 @@ func CreateConfigFile(userName string, pass string) error {
 	viper.Set("bitbucketUserName", userName)
 	viper.Set("bitbucketPassword", pass)
 
+	viper.Set("repositoryCachePath", repositoryCachePath)
+	viper.Set("issueCachePath", issueCachePath)
+
 	err := writeConfigFile()
 	if err != nil {
 		return err
@@ -69,9 +73,15 @@ func CreateConfigFile(userName string, pass string) error {
 
 }
 
+func GetAllConfigKeyAndValue() ([]byte, error) {
+
+	return json.MarshalIndent(viper.AllSettings(), "", "    ")
+
+}
+
 func writeConfigFile() error {
 
-	configJson, err := json.MarshalIndent(viper.AllSettings(), "", "    ")
+	configJson, err := GetAllConfigKeyAndValue()
 	if err != nil {
 		return fmt.Errorf("JsonMarshalError: %s", err)
 	}

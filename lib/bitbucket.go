@@ -4,13 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"bitbucket.org/Masami_Nakaoka/bissucket/config"
 )
 
 const (
 	bitbucketURI = "https://api.bitbucket.org/2.0/"
 )
 
-func DoGet(endPoint string, userName string, pass string) (*http.Response, error) {
+func DoGet(endPoint string, userName string) (*http.Response, error) {
+
+	pass := config.GetConfigValueByKey("bitbucketPassword")
 
 	endPoint = bitbucketURI + endPoint
 
