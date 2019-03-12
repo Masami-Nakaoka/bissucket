@@ -6,31 +6,26 @@ import (
 	"fmt"
 	"strconv"
 
-	"bitbucket.org/Masami_Nakaoka/bissucket/config"
 	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 	"github.com/urfave/cli"
 )
 
-func showIssueDetail(issues *bitbucket.Issues, issueID string, repositoryName string) error {
-
-	fmt.Println(issues)
+func showIssueDetail(issues *bitbucket.Issues, issueID string) error {
 
 	fmt.Println("------------------------------")
-	fmt.Println("Details of " + repositoryName + "'s issue")
+	fmt.Println("Details of issue")
 	fmt.Println("------------------------------")
 
 	for _, issue := range issues.Values {
 		if issueID == strconv.Itoa(issue.ID) {
-			fmt.Print("ID:        ")
-			fmt.Println(issue.ID)
-			fmt.Println("State:    " + issue.State)
-			fmt.Println("Priority: " + issue.Priority)
-			fmt.Println("Kind:     " + issue.Kind)
-			fmt.Println("Assignee: " + issue.Assignee.Username)
-			fmt.Println("Title:    " + issue.Title)
-			fmt.Println("Content:  ")
-			fmt.Println(issue.Content.Raw)
-			fmt.Println("")
+			fmt.Printf("ID:         %d\n", issue.ID)
+			fmt.Printf("Repository: %s\n", issue.Repository.Name)
+			fmt.Printf("State:      %s\n", issue.State)
+			fmt.Printf("Priority:   %s\n", issue.Priority)
+			fmt.Printf("Kind:       %s\n", issue.Kind)
+			fmt.Printf("Assignee:   %s\n", issue.Assignee.Username)
+			fmt.Printf("Title:      %s\n", issue.Title)
+			fmt.Printf("Content:    %s\n", issue.Content.Raw)
 		}
 	}
 
@@ -44,7 +39,6 @@ func Show(c *cli.Context) error {
 	}
 
 	issueID := c.Args().First()
-	repositoryName := config.GetConfigValueByKey("defaultRepository")
 
 	buf, err := getListByCache("issue")
 	if err != nil {
@@ -55,7 +49,7 @@ func Show(c *cli.Context) error {
 		return fmt.Errorf("JsonUnmarshalError: %s", err)
 	}
 
-	showIssueDetail(issues, issueID, repositoryName)
-	fmt.Println(issueID)
+	showIssueDetail(issues, issueID)
+
 	return nil
 }
