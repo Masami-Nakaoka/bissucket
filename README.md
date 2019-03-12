@@ -56,8 +56,6 @@ $HOME/.bissucket.repositoriescache.json
 
 ## Todo
 
-I will investigate whether it can be realized.
-
 - Command add
   - issue create
   - issue complete
