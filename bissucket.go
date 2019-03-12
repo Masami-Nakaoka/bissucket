@@ -22,13 +22,13 @@ func main() {
 		Name:  "repository, r",
 		Usage: "Flag for declaring the operation of the repository.",
 	}
-	repoNameFlag := cli.StringFlag{
-		Name:  "repository-name, rn",
-		Usage: "Flag when specifying `repository name`",
-	}
-	issueFlag := cli.BoolFlag{
+	issueFlag := cli.StringFlag{
 		Name:  "issue, i",
 		Usage: "Flag for declaring the operation of the issue.",
+	}
+	saveCacheFlag := cli.BoolFlag{
+		Name: "save-cache, save",
+		Usage: "Flag to save issues in cache file."
 	}
 	setFlag := cli.StringFlag{
 		Name:  "set, s",
@@ -115,11 +115,12 @@ func main() {
 		{
 			Name:      "list",
 			Usage:     "Display Issue and list of repositories. Display a list of defaultRepository if no options are given.",
-			UsageText: "bissucket list [--repository, -r] [--repository-name REPOSITORY NAME, -rn REPOSITOORY NAME]",
+			UsageText: "bissucket list [--repository, -r] [--issue REPOSITORY NAME, -i REPOSITOORY NAME] [--save-cache]",
 			Action:    List,
 			Flags: []cli.Flag{
 				repoFlag,
-				repoNameFlag,
+				issueFlag,
+				saveCacheFlag,
 			},
 		},
 		{

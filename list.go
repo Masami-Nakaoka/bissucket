@@ -70,48 +70,40 @@ func getIssueListByRepositoryName(repoName string) ([]byte, error) {
 
 func List(c *cli.Context) error {
 
-	var (
-		buf []byte
-		err error
-	)
+	userName := config.GetConfigValueByKey("bitbucketUserName")
+	endPoint := "repositories/" + userName
 
 	if c.Bool("r") {
 
-		buf, err = getListByCache("repository")
+		endPoint += "?pagelen=100"
+
+		res, err := bitbucket.DoGet(endPoint, userName)
 		if err != nil {
-			return err
+			return fmt.Errorf("fetchError: %s", err)
 		}
 
-		if err = json.Unmarshal(buf, &repos); err != nil {
-			return fmt.Errorf("jsonUnMarshallErrror: %s", err)
+		defer res.Body.Close()
+
+		if err = json.NewDecoder(res.Body).Decode(&repos); err != nil {
+			return fmt.Errorf("jsonDecodeError: %s", err)
 		}
 
 		showRepositoryList(repos)
 
-	} else {
+	} else if c.String("i") != "" {
 
-		var repositoryName string
+		repositoryName := c.String("i")
+		endPoint += "/" + repositoryName + "/issues"
 
-		if c.String("rn") != "" {
-
-			repositoryName = c.String("rn")
-
-			buf, err = getIssueListByRepositoryName(repositoryName)
-
-		} else {
-
-			repositoryName = config.GetConfigValueByKey("defaultRepository")
-
-			buf, err = getListByCache("issue")
-
-		}
-
+		res, err := bitbucket.DoGet(endPoint, userName)
 		if err != nil {
-			return err
+			return fmt.Errorf("fetchError: %s", err)
 		}
 
-		if err = json.Unmarshal(buf, &issues); err != nil {
-			return fmt.Errorf("jsonUnMarshallErrror: %s", err)
+		defer res.Body.Close()
+
+		if err = json.NewDecoder(res.Body).Decode(&issues); err != nil {
+			return fmt.Errorf("jsonDecodeError: %s", err)
 		}
 
 		showIssueList(repositoryName, issues)
