@@ -32,7 +32,9 @@ GLOBAL OPTIONS:
 If you have installed Golang:
 
 ```shell
-go get -u github.com/Masami-Nakaoka/bissucket
+go get -u github.com/namahu/bissucket
+cd $GOPATH/src/github.com/namahu/bissucket
+go install
 ```
 
 ## After installation
