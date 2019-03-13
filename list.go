@@ -4,12 +4,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strconv"
 
 	"bitbucket.org/Masami_Nakaoka/bissucket/config"
 	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
 	"github.com/urfave/cli"
 )
+
+var issues *bitbucket.Issues
+
+func saveIssuesInCache(issue *bitbucket.Issues) error {
+
+	issueCachePath := config.GetConfigValueByKey("issueCachePath")
+
+	buf, err := json.MarshalIndent(issue, "", "    ")
+	if err != nil {
+		return fmt.Errorf("JsonMarshallError: %s", err)
+	}
+
+	err = ioutil.WriteFile(issueCachePath, buf, os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("WriteFileError: %s", err)
+	}
+
+	return nil
+}
 
 func showIssueList(repositoryName string, issues *bitbucket.Issues) {
 
@@ -25,20 +45,6 @@ func showIssueList(repositoryName string, issues *bitbucket.Issues) {
 	}
 }
 
-func showRepositoryList(repos *bitbucket.Repos) {
-
-	fmt.Println("---------------------------------")
-	fmt.Println("Repository Name  /  Has Issues")
-	fmt.Println("---------------------------------")
-
-	for _, repo := range repos.Values {
-		fmt.Printf("%s  /  %t\n", repo.Name, repo.HasIssues)
-	}
-
-	fmt.Println("")
-
-}
-
 func getListByCache(target string) ([]byte, error) {
 	cachePath := config.GetConfigValueByKey(target + "CachePath")
 
@@ -46,69 +52,39 @@ func getListByCache(target string) ([]byte, error) {
 
 }
 
-func getIssueListByRepositoryName(repoName string) ([]byte, error) {
+func getIssueList(repoName string) error {
 
 	userName := config.GetConfigValueByKey("bitbucketUserName")
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
 
 	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
-		return nil, fmt.Errorf("FetchError: %s", err)
+		return fmt.Errorf("FetchError: %s", err)
 	}
 
 	defer res.Body.Close()
 
-	var issues *bitbucket.Issues
-
-	if err = json.NewDecoder(res.Body).Decode(&issues); err != nil {
-		return nil, fmt.Errorf("JsonDecodeError: %s", err)
-	}
-
-	return json.MarshalIndent(issues, "", "    ")
+	return json.NewDecoder(res.Body).Decode(&issues)
 
 }
 
 func List(c *cli.Context) error {
 
-	userName := config.GetConfigValueByKey("bitbucketUserName")
-	endPoint := "repositories/" + userName
-
-	if c.Bool("r") {
-
-		endPoint += "?pagelen=100"
-
-		res, err := bitbucket.DoGet(endPoint, userName)
-		if err != nil {
-			return fmt.Errorf("fetchError: %s", err)
-		}
-
-		defer res.Body.Close()
-
-		if err = json.NewDecoder(res.Body).Decode(&repos); err != nil {
-			return fmt.Errorf("jsonDecodeError: %s", err)
-		}
-
-		showRepositoryList(repos)
-
-	} else if c.String("i") != "" {
-
-		repositoryName := c.String("i")
-		endPoint += "/" + repositoryName + "/issues"
-
-		res, err := bitbucket.DoGet(endPoint, userName)
-		if err != nil {
-			return fmt.Errorf("fetchError: %s", err)
-		}
-
-		defer res.Body.Close()
-
-		if err = json.NewDecoder(res.Body).Decode(&issues); err != nil {
-			return fmt.Errorf("jsonDecodeError: %s", err)
-		}
-
-		showIssueList(repositoryName, issues)
-
+	if c.NArg() == 0 && c.Args().First() == "" {
+		return fmt.Errorf("Enter repository name to display issues.")
 	}
+
+	repositoryName := c.Args().First()
+
+	if err := getIssueList(repositoryName); err != nil {
+		return fmt.Errorf("getIssueListError: %s", err)
+	}
+
+	if c.Bool("save") {
+		saveIssuesInCache(issues)
+	}
+
+	showIssueList(repositoryName, issues)
 
 	return nil
 }
