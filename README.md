@@ -33,7 +33,7 @@ If you have installed Golang:
 
 ```shell
 go get -u github.com/namahu/bissucket
-cd $GOPATH/src/namahu/bissucket
+cd $GOPATH/src/github.com/namahu/bissucket
 go install
 ```
 

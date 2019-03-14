@@ -18,17 +18,13 @@ func main() {
 	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI.\n    First from [bissucket sync] please."
 	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
-	repoFlag := cli.BoolFlag{
-		Name:  "repository, r",
-		Usage: "Flag for declaring the operation of the repository.",
-	}
-	repoNameFlag := cli.StringFlag{
-		Name:  "repository-name, rn",
-		Usage: "Flag when specifying `repository name`",
-	}
-	issueFlag := cli.BoolFlag{
-		Name:  "issue, i",
-		Usage: "Flag for declaring the operation of the issue.",
+	// issueFlag := cli.StringFlag{
+	// 	Name:  "issue, i",
+	// 	Usage: "Flag for declaring the operation of the issue.",
+	// }
+	saveCacheFlag := cli.BoolFlag{
+		Name:  "save-cache, save",
+		Usage: "Flag to save issues in cache file.",
 	}
 	setFlag := cli.StringFlag{
 		Name:  "set, s",
@@ -103,23 +99,12 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:      "sync",
-			Usage:     "Synchronize with Bitbucket's repository and issue.",
-			UsageText: "bissucket sync [--repository, -r][--issue, -i]",
-			Action:    Sync,
-			Flags: []cli.Flag{
-				repoFlag,
-				issueFlag,
-			},
-		},
-		{
 			Name:      "list",
-			Usage:     "Display Issue and list of repositories. Display a list of defaultRepository if no options are given.",
-			UsageText: "bissucket list [--repository, -r] [--repository-name REPOSITORY NAME, -rn REPOSITOORY NAME]",
+			Usage:     "Display issue of specified repository.",
+			UsageText: "bissucket list [REPOSITORY NAME] [--save-cache]",
 			Action:    List,
 			Flags: []cli.Flag{
-				repoFlag,
-				repoNameFlag,
+				saveCacheFlag,
 			},
 		},
 		{
