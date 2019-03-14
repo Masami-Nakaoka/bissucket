@@ -7,7 +7,7 @@ bissucket is a tool to manipulate Bitbucket Issue from the CLI.
 ```shell
 NAME:
    bissucket - bissucket is a tool to manipulate Bitbucket Issue from the CLI.
-    First from [bissucket sync] please.
+   First from [bissucket sync --repository] please.
 
 USAGE:
    bissucket [global options] command [command options] [arguments...]
@@ -56,17 +56,15 @@ $HOME/.bissucket.repositoriescache.json
 
 ## Todo
 
-I will investigate whether it can be realized.
-
 - Command add
-    - issue create
-    - issue complete
-    - add comment
-    - etc...
+  - issue create
+  - issue complete
+  - add comment
+  - etc...
 
 ## Author
 
-Masami-Nakaoka
+namahu
 
 ## License
 
