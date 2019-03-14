@@ -3,7 +3,7 @@ package main
 import (
 	"io/ioutil"
 
-	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	"github.com/namahu/bissucket/config"
 )
 
 func readCache() ([]byte, error) {

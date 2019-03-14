@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	"github.com/namahu/bissucket/config"
 	"github.com/urfave/cli"
 )
 

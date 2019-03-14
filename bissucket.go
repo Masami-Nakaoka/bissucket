@@ -5,7 +5,7 @@ import (
 	"os"
 	"syscall"
 
-	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	"github.com/namahu/bissucket/config"
 	"github.com/urfave/cli"
 	"golang.org/x/crypto/ssh/terminal"
 )

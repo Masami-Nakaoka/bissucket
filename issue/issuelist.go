@@ -9,8 +9,8 @@ package issue
 // 	"strconv"
 // 	"time"
 
-// 	"bitbucket.org/Masami_Nakaoka/bissucket/config"
-// 	bitbucket "bitbucket.org/Masami_Nakaoka/bissucket/lib"
+// 	"github.com/namahu/bissucket/config"
+// 	bitbucket "github.com/namahu/bissucket/lib"
 
 // 	"github.com/urfave/cli"
 // )

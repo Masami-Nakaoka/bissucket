@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"bitbucket.org/Masami_Nakaoka/bissucket/config"
+	"github.com/namahu/bissucket/config"
 )
 
 const (
