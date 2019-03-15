@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
+	"text/tabwriter"
 
 	"github.com/namahu/bissucket/config"
 	bitbucket "github.com/namahu/bissucket/lib"
@@ -34,17 +36,32 @@ func saveIssuesInCache(issueCache *IssueCache) error {
 	return nil
 }
 
-func showIssueList(repositoryName string, store *bitbucket.Issues) {
+func showIssueList(issueCache *IssueCache) {
 
-	fmt.Println("------------------------------")
-	fmt.Println("Issue List of " + repositoryName)
-	fmt.Println("------------------------------")
-	fmt.Println("ID / State / Priority / Kind / Assignee / Title")
+	issueItemList := make([][]string, 0, len(issueCache.Store.Values))
+	for _, issue := range issueCache.Store.Values {
+		issueItemList = append(issueItemList, []string{
+			strconv.Itoa(issue.ID),
+			issue.Repository.Name,
+			issue.State,
+			issue.Priority,
+			issue.Kind,
+			issue.Assignee.Username,
+			issue.Title,
+		})
+	}
 
-	var issueTemplate string
-	for _, issue := range store.Values {
-		issueTemplate = strconv.Itoa(issue.ID) + " / " + issue.State + " / " + issue.Priority + " / " + issue.Kind + " / " + issue.Assignee.Username + " / " + issue.Title
-		fmt.Println(issueTemplate)
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 0, 4, 2, ' ', 0)
+
+	defer w.Flush()
+
+	header := []string{"ID", "Repo", "State", "Priority", "Kind", "Assignee", "Title"}
+	fmt.Fprintln(w, strings.Join(header[:], "\t"))
+
+	for _, issueItem := range issueItemList {
+		strings := strings.Join(issueItem[:], "\t")
+		fmt.Fprintln(w, strings)
 	}
 }
 
@@ -55,7 +72,7 @@ func getListByCache(target string) ([]byte, error) {
 
 }
 
-func getIssueList(repoName string, store *bitbucket.Issues) error {
+func getIssueList(repoName string, cache *IssueCache) error {
 
 	userName := config.GetConfigValueByKey("bitbucketUserName")
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
@@ -67,13 +84,13 @@ func getIssueList(repoName string, store *bitbucket.Issues) error {
 
 	defer res.Body.Close()
 
-	return json.NewDecoder(res.Body).Decode(&store)
+	return json.NewDecoder(res.Body).Decode(&cache.Store)
 
 }
 
 func List(c *cli.Context) error {
 
-	var store bitbucket.Issues
+	var issueCache *IssueCache
 
 	if c.NArg() == 0 && c.Args().First() == "" {
 		return fmt.Errorf("Enter repository name to display issues.")
@@ -81,21 +98,30 @@ func List(c *cli.Context) error {
 
 	repositoryName := c.Args().First()
 
-	if err := getIssueList(repositoryName, &store); err != nil {
-		return fmt.Errorf("getIssueListError: %s", err)
+	buf, err := readCache()
+	if err != nil {
+		if err := getIssueList(repositoryName, issueCache); err != nil {
+			return fmt.Errorf("getIssueListError: %s", err)
+		}
+	}
+
+	if err := json.Unmarshal(buf, &issueCache); err != nil {
+		return fmt.Errorf("UnmarshalError: %s", err)
+	}
+
+	if repositoryName != issueCache.Repository {
+		if err = getIssueList(repositoryName, issueCache); err != nil {
+			return fmt.Errorf("getIssueListError: %s", err)
+		}
+		issueCache.Repository = repositoryName
 	}
 
 	if c.Bool("save") {
 
-		issueCache := &IssueCache{
-			Repository: repositoryName,
-			Store:      &store,
-		}
-
 		saveIssuesInCache(issueCache)
 	}
 
-	showIssueList(repositoryName, &store)
+	showIssueList(issueCache)
 
 	return nil
 }
