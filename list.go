@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -65,13 +66,6 @@ func showIssueList(issueCache *IssueCache) {
 	}
 }
 
-func getListByCache(target string) ([]byte, error) {
-	cachePath := config.GetConfigValueByKey(target + "CachePath")
-
-	return ioutil.ReadFile(cachePath)
-
-}
-
 func getIssueList(repoName string, cache *IssueCache) error {
 
 	userName := config.GetConfigValueByKey("bitbucketUserName")
@@ -90,27 +84,21 @@ func getIssueList(repoName string, cache *IssueCache) error {
 
 func List(c *cli.Context) error {
 
-	var issueCache *IssueCache
+	issueCache := &IssueCache{}
 
 	if c.NArg() == 0 && c.Args().First() == "" {
-		return fmt.Errorf("Enter repository name to display issues.")
+		return errors.New("Enter repository name to display issues.")
 	}
 
 	repositoryName := c.Args().First()
+	issueCache.Repository = repositoryName
 
-	buf, err := readCache()
-	if err != nil {
-		if err := getIssueList(repositoryName, issueCache); err != nil {
-			return fmt.Errorf("getIssueListError: %s", err)
-		}
-	}
-
-	if err := json.Unmarshal(buf, &issueCache); err != nil {
-		return fmt.Errorf("UnmarshalError: %s", err)
+	if err := loadCache(issueCache); err != nil {
+		return fmt.Errorf("loadCacheError: %s", err)
 	}
 
 	if repositoryName != issueCache.Repository {
-		if err = getIssueList(repositoryName, issueCache); err != nil {
+		if err := getIssueList(repositoryName, issueCache); err != nil {
 			return fmt.Errorf("getIssueListError: %s", err)
 		}
 		issueCache.Repository = repositoryName
