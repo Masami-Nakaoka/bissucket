@@ -15,17 +15,13 @@ func main() {
 	app.Name = "bissucket"
 	app.HelpName = "bissucket"
 	app.Version = "0.1.1"
-	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI.\n    First from [bissucket sync] please."
+	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI."
 	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
 	// issueFlag := cli.StringFlag{
 	// 	Name:  "issue, i",
 	// 	Usage: "Flag for declaring the operation of the issue.",
 	// }
-	saveCacheFlag := cli.BoolFlag{
-		Name:  "save-cache, save",
-		Usage: "Flag to save issues in cache file.",
-	}
 	setFlag := cli.StringFlag{
 		Name:  "set, s",
 		Usage: "Flag for registering or changing settings.",
@@ -86,14 +82,6 @@ func main() {
 
 		}
 
-		bitbucketUserName = config.GetConfigValueByKey("bitbucketUserName")
-		bitbucketPassword = config.GetConfigValueByKey("bitbucketPassword")
-
-		app.Metadata = map[string]interface{}{
-			"bitbucketUserName": bitbucketUserName,
-			"bitbucketPassword": bitbucketPassword,
-		}
-
 		return nil
 	}
 
@@ -101,11 +89,8 @@ func main() {
 		{
 			Name:      "list",
 			Usage:     "Display issue of specified repository.",
-			UsageText: "bissucket list [REPOSITORY NAME] [--save-cache]",
+			UsageText: "bissucket list [REPOSITORY NAME]",
 			Action:    List,
-			Flags: []cli.Flag{
-				saveCacheFlag,
-			},
 		},
 		{
 			Name:      "config",
