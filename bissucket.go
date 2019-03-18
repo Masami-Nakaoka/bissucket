@@ -22,10 +22,6 @@ func main() {
 	// 	Name:  "issue, i",
 	// 	Usage: "Flag for declaring the operation of the issue.",
 	// }
-	saveCacheFlag := cli.BoolFlag{
-		Name:  "save-cache, save",
-		Usage: "Flag to save issues in cache file.",
-	}
 	setFlag := cli.StringFlag{
 		Name:  "set, s",
 		Usage: "Flag for registering or changing settings.",
@@ -86,14 +82,6 @@ func main() {
 
 		}
 
-		bitbucketUserName = config.GetConfigValueByKey("bitbucketUserName")
-		bitbucketPassword = config.GetConfigValueByKey("bitbucketPassword")
-
-		app.Metadata = map[string]interface{}{
-			"bitbucketUserName": bitbucketUserName,
-			"bitbucketPassword": bitbucketPassword,
-		}
-
 		return nil
 	}
 
@@ -101,11 +89,8 @@ func main() {
 		{
 			Name:      "list",
 			Usage:     "Display issue of specified repository.",
-			UsageText: "bissucket list [REPOSITORY NAME] [--save-cache]",
+			UsageText: "bissucket list [REPOSITORY NAME]",
 			Action:    List,
-			Flags: []cli.Flag{
-				saveCacheFlag,
-			},
 		},
 		{
 			Name:      "config",
