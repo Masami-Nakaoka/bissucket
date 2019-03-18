@@ -15,7 +15,7 @@ func main() {
 	app.Name = "bissucket"
 	app.HelpName = "bissucket"
 	app.Version = "0.1.1"
-	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI.\n    First from [bissucket sync] please."
+	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI."
 	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
 	// issueFlag := cli.StringFlag{
