@@ -14,10 +14,9 @@ import (
 	"github.com/urfave/cli"
 )
 
-var issues *bitbucket.Issues
+var issues interface{}
 
-func showIssueList(issues *bitbucket.Issues) {
-
+func showIssuesList(issues *bitbucket.Issues) {
 	issueItemList := make([][]string, 0, len(issues.Values))
 	for _, issue := range issues.Values {
 		issueItemList = append(issueItemList, []string{
@@ -45,6 +44,10 @@ func showIssueList(issues *bitbucket.Issues) {
 	}
 }
 
+func showIssueList(issue *bitbucket.Issue) {
+	fmt.Println(issue)
+}
+
 func List(c *cli.Context) error {
 
 	if c.NArg() == 0 && c.Args().First() == "" {
@@ -53,9 +56,19 @@ func List(c *cli.Context) error {
 
 	}
 
-	repositoryName := c.Args().First()
-	userName := config.GetConfigValueByKey("bitbucketUserName")
-	endPoint := "repositories/" + userName + "/" + repositoryName + "/issues"
+	var (
+		repositoryName = c.Args().First()
+		userName       = config.GetConfigValueByKey("bitbucketUserName")
+		endPoint       = "repositories/" + userName + "/" + repositoryName + "/issues"
+	)
+
+	if c.Int("d") == 0 {
+		issues = &bitbucket.Issues{}
+	} else if c.Int("d") != 0 {
+		issueID := c.Int("d")
+		endPoint += "/" + strconv.Itoa(issueID)
+		issues = &bitbucket.Issue{}
+	}
 
 	res, err := bitbucket.DoGet(endPoint, userName)
 	if err != nil {
@@ -68,7 +81,14 @@ func List(c *cli.Context) error {
 		return fmt.Errorf("jsonDecodeError: %s", err)
 	}
 
-	showIssueList(issues)
+	switch i := issues.(type) {
+	case *bitbucket.Issues:
+		showIssuesList(i)
+	case *bitbucket.Issue:
+		showIssueList(i)
+	default:
+		return fmt.Errorf("Unexpected type: %T", i)
+	}
 
 	return nil
 }

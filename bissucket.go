@@ -18,13 +18,13 @@ func main() {
 	app.Usage = "bissucket is a tool to manipulate Bitbucket Issue from the CLI."
 	app.UsageText = "bissucket [global options] command [command options] [arguments...]"
 
-	// issueFlag := cli.StringFlag{
-	// 	Name:  "issue, i",
-	// 	Usage: "Flag for declaring the operation of the issue.",
-	// }
 	setFlag := cli.StringFlag{
 		Name:  "set, s",
 		Usage: "Flag for registering or changing settings.",
+	}
+	detailFlag := cli.IntFlag{
+		Name:  "detail, d",
+		Usage: "Specify the issue ID to check details.",
 	}
 	// titleFlag := cli.StringFlag{
 	// 	Name:  "title, t",
@@ -88,9 +88,12 @@ func main() {
 	app.Commands = []cli.Command{
 		{
 			Name:      "list",
-			Usage:     "Display issue of specified repository.",
+			Usage:     "Display issues for the specified repository.",
 			UsageText: "bissucket list [REPOSITORY NAME]",
 			Action:    List,
+			Flags: []cli.Flag{
+				detailFlag,
+			},
 		},
 		{
 			Name:      "config",
@@ -103,8 +106,8 @@ func main() {
 		},
 		{
 			Name:      "show",
-			Usage:     "Display Issue details of defaultRepository.",
-			UsageText: "bissucket show [issue id]",
+			Usage:     "Display issues detail for the specified repository.",
+			UsageText: "bissucket show [repository name] [issue id]",
 			Action:    Show,
 		},
 		// {
