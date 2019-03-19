@@ -17,7 +17,6 @@ VERSION:
 COMMANDS:
    list     Display issues for the specified repository.
    config   Command to set bissucket related operations. If there is no argument, display a list of settings.
-   show     Display Issue details of defaultRepository.
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
