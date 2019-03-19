@@ -45,7 +45,27 @@ func showIssuesList(issues *bitbucket.Issues) {
 }
 
 func showIssueList(issue *bitbucket.Issue) {
+	itemList := [][]string{
+		[]string{"IssueID", strconv.Itoa(issue.ID)},
+		[]string{"Repository", issue.Repository.Name},
+		[]string{"State", issue.State},
+		[]string{"Priority", issue.Priority},
+		[]string{"Kind", issue.Kind},
+		[]string{"Assignee", issue.Assignee.Username},
+		[]string{"Title", issue.Title},
+		[]string{"Content", "\n" + issue.Content.Raw},
+	}
 	fmt.Println(issue)
+
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 0, 4, 2, ' ', 0)
+
+	defer w.Flush()
+
+	for _, item := range itemList {
+		strings := strings.Join(item[:], "\t")
+		fmt.Fprintln(w, strings)
+	}
 }
 
 func List(c *cli.Context) error {

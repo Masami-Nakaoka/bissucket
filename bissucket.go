@@ -104,12 +104,6 @@ func main() {
 				setFlag,
 			},
 		},
-		{
-			Name:      "show",
-			Usage:     "Display issues detail for the specified repository.",
-			UsageText: "bissucket show [repository name] [issue id]",
-			Action:    Show,
-		},
 		// {
 		// 	Name: "create",
 		// 	Usage: "Create the new issue.",
