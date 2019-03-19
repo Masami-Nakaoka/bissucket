@@ -55,7 +55,6 @@ func showIssueList(issue *bitbucket.Issue) {
 		[]string{"Title", issue.Title},
 		[]string{"Content", "\n" + issue.Content.Raw},
 	}
-	fmt.Println(issue)
 
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 2, ' ', 0)
