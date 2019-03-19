@@ -26,22 +26,22 @@ func main() {
 		Name:  "detail, d",
 		Usage: "Specify the issue ID to check details.",
 	}
-	// titleFlag := cli.StringFlag{
-	// 	Name:  "title, t",
-	// 	Usage: "Title of Issue.",
-	// }
-	// priorityFlag := cli.StringFlag{
-	// 	Name:  "priority, p",
-	// 	Usage: "Priority of Issue.",
-	// }
-	// kindFlag := cli.StringFlag{
-	// 	Name:  "kind, k",
-	// 	Usage: "Kind of Issue",
-	// }
-	// rawcontentFlag := cli.StringFlag{
-	// 	Name:  "raw-content, raw",
-	// 	Usage: "content of Issue",
-	// }
+	titleFlag := cli.StringFlag{
+		Name:  "title, t",
+		Usage: "Title of Issue.",
+	}
+	priorityFlag := cli.StringFlag{
+		Name:  "priority, p",
+		Usage: "Priority of Issue.",
+	}
+	kindFlag := cli.StringFlag{
+		Name:  "kind, k",
+		Usage: "Kind of Issue",
+	}
+	rawcontentFlag := cli.StringFlag{
+		Name:  "raw-content, raw",
+		Usage: "content of Issue",
+	}
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
@@ -104,6 +104,12 @@ func main() {
 			Name:      "create",
 			Usage:     "Create the new issue.",
 			UsageText: "bissucket create ",
+			Flags: []cli.Flag{
+				titleFlag,
+				priorityFlag,
+				kindFlag,
+				rawcontentFlag,
+			},
 		},
 	}
 
