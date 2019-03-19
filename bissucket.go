@@ -73,10 +73,6 @@ func main() {
 			fmt.Println("")
 			fmt.Println("Creation of config file succeeded.")
 			fmt.Println("")
-			fmt.Println("Enter the following command for Bitbucket's Synchronize the repository.")
-			fmt.Println("")
-			fmt.Println("bissucket sync")
-			fmt.Println("")
 
 			os.Exit(0)
 
