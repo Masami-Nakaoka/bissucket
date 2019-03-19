@@ -100,11 +100,11 @@ func main() {
 				setFlag,
 			},
 		},
-		// {
-		// 	Name: "create",
-		// 	Usage: "Create the new issue.",
-		// 	UsageText: "bissucket create "
-		// },
+		{
+			Name:      "create",
+			Usage:     "Create the new issue.",
+			UsageText: "bissucket create ",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
