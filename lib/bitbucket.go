@@ -1,6 +1,7 @@
 package bitbucket
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"net/http"
@@ -12,9 +13,9 @@ const (
 	bitbucketURI = "https://api.bitbucket.org/2.0/"
 )
 
-func DoGet(endPoint string, userName string) (*http.Response, error) {
+var pass = config.GetConfigValueByKey("bitbucketPassword")
 
-	pass := config.GetConfigValueByKey("bitbucketPassword")
+func DoGet(endPoint string, userName string) (*http.Response, error) {
 
 	endPoint = bitbucketURI + endPoint
 
@@ -36,4 +37,15 @@ func DoGet(endPoint string, userName string) (*http.Response, error) {
 	}
 
 	return res, nil
+}
+
+func DoPost(endPoint string, userName string, params interface{}) (*http.Response, error) {
+
+	endPoint = bitbucketURI + endPoint
+	body := bytes.NewBufferString(params.(string))
+	req, err := http.NewRequest("POST", endPoint, body)
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
 }
