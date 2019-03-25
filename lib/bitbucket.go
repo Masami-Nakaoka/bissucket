@@ -1,10 +1,12 @@
 package bitbucket
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/namahu/bissucket/config"
 )
@@ -13,11 +15,11 @@ const (
 	bitbucketURI = "https://api.bitbucket.org/2.0/"
 )
 
-var pass = config.GetConfigValueByKey("bitbucketPassword")
-
 func DoGet(endPoint string, userName string) (*http.Response, error) {
 
 	endPoint = bitbucketURI + endPoint
+
+	pass := config.GetConfigValueByKey("bitbucketPassword")
 
 	req, err := http.NewRequest("GET", endPoint, nil)
 	if err != nil {
@@ -42,10 +44,28 @@ func DoGet(endPoint string, userName string) (*http.Response, error) {
 func DoPost(endPoint string, userName string, params interface{}) (*http.Response, error) {
 
 	endPoint = bitbucketURI + endPoint
-	body := bytes.NewBufferString(params.(string))
+	pass := config.GetConfigValueByKey("bitbucketPassword")
+
+	urlValue := url.Values{}
+	urlValue.Add("title", "test")
+
+	var body io.Reader
+	body = strings.NewReader(urlValue.Encode())
 	req, err := http.NewRequest("POST", endPoint, body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RequestError: %s", err)
 	}
-	return nil, nil
+	req.Header.Set("Content-Type", "application/application/x-www-form-urlencoded")
+	req.SetBasicAuth(userName, pass)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("ResponseError: %s", err)
+	}
+
+	if res.StatusCode != 200 {
+		return nil, errors.New(res.Status)
+	}
+
+	return res, nil
 }

@@ -104,6 +104,7 @@ func main() {
 			Name:      "create",
 			Usage:     "Create the new issue.",
 			UsageText: "bissucket create [repository name] [issue title] [command options]",
+			Action:    Create,
 			Flags: []cli.Flag{
 				titleFlag,
 				priorityFlag,

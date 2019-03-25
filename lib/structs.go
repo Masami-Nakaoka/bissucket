@@ -292,3 +292,9 @@ type Issue struct {
 	Type      string      `json:"type"`
 	ID        int         `json:"id"`
 }
+
+type PostItem struct {
+	Title string `json:"title`
+	// Priority string `json:"priority`
+	// Kind     string `json:"kind`
+}
