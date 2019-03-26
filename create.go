@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"net/url"
 
 	"github.com/namahu/bissucket/config"
 	bitbucket "github.com/namahu/bissucket/lib"
@@ -34,21 +33,27 @@ func Create(c *cli.Context) error {
 	userName := config.GetConfigValueByKey("bitbucketUserName")
 	repoName := c.Args()[0]
 
-	issue := url.Values{}
-	issue.Add("title", c.Args()[1])
+	issue := make(map[string]interface{})
+	issue["title"] = c.Args()[1]
 	if c.String("priority") != "" {
 		err := existenceCheck("priority", listItem["priority"], c.String("priority"))
 		if err != nil {
 			return err
 		}
-		issue.Add("priority", c.String("priority"))
+		issue["priority"] = c.String("priority")
 	}
 	if c.String("kind") != "" {
 		err := existenceCheck("kind", listItem["kind"], c.String("kind"))
 		if err != nil {
 			return err
 		}
-		issue.Add("kind", c.String("kind"))
+		issue["kind"] = c.String("kind")
+	}
+	if c.String("raw-content") != "" {
+		contentMap := map[string]string{
+			"raw": c.String("raw-content"),
+		}
+		issue["content"] = contentMap
 	}
 
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"

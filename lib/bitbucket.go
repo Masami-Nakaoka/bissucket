@@ -1,13 +1,11 @@
 package bitbucket
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/namahu/bissucket/config"
 )
@@ -42,18 +40,18 @@ func DoGet(endPoint string, userName string) (*http.Response, error) {
 	return res, nil
 }
 
-func DoPost(endPoint string, userName string, params url.Values) error {
+func DoPost(endPoint string, userName string, params map[string]interface{}) error {
 
 	endPoint = bitbucketURI + endPoint
 	pass := config.GetConfigValueByKey("bitbucketPassword")
 
-	var body io.Reader
-	body = strings.NewReader(params.Encode())
-	req, err := http.NewRequest("POST", endPoint, body)
+	body, _ := json.Marshal(params)
+
+	req, err := http.NewRequest("POST", endPoint, bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("RequestError: %s", err)
 	}
-	req.Header.Set("Content-Type", "application/application/x-www-form-urlencoded")
+	req.Header.Set("Content-Type", "application/json")
 	req.SetBasicAuth(userName, pass)
 
 	res, err := http.DefaultClient.Do(req)
