@@ -42,6 +42,10 @@ func main() {
 		Name:  "raw-content, raw",
 		Usage: "content of Issue",
 	}
+    assignUserFlag := cli.StringFlag{
+        Name: "assign-user, au",
+        Usage: "Flag to specify the user to assign",
+    }
 
 	// コンフィグファイルのチェック。なければ作成
 	app.Before = func(c *cli.Context) error {
@@ -110,6 +114,7 @@ func main() {
 				priorityFlag,
 				kindFlag,
 				rawcontentFlag,
+                assignUserFlag,
 			},
 		},
 	}

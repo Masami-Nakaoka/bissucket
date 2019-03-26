@@ -55,6 +55,12 @@ func Create(c *cli.Context) error {
 		}
 		issue["content"] = contentMap
 	}
+    if c.String("assign-user") != "" {
+        assignMap := map[string]string{
+            "username": c.String("assign-user"),
+        }
+        issue["assignee"] = assignMap
+    }
 
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
 
