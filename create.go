@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/url"
 
 	"github.com/namahu/bissucket/config"
 	bitbucket "github.com/namahu/bissucket/lib"
@@ -14,15 +15,13 @@ func Create(c *cli.Context) error {
 		return errors.New("The title of the issue is a required item.")
 	}
 
-	issue := bitbucket.PostItem{}
-
 	userName := config.GetConfigValueByKey("bitbucketUserName")
-
 	repoName := c.Args()[0]
-	issue.Title = c.Args()[1]
+
+	issue := url.Values{}
+	issue.Add("title", c.Args()[1])
 
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
-	fmt.Println(issue.Title)
 
 	res, err := bitbucket.DoPost(endPoint, userName, issue)
 	if err != nil {

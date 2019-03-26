@@ -41,16 +41,13 @@ func DoGet(endPoint string, userName string) (*http.Response, error) {
 	return res, nil
 }
 
-func DoPost(endPoint string, userName string, params interface{}) (*http.Response, error) {
+func DoPost(endPoint string, userName string, params url.Values) (*http.Response, error) {
 
 	endPoint = bitbucketURI + endPoint
 	pass := config.GetConfigValueByKey("bitbucketPassword")
 
-	urlValue := url.Values{}
-	urlValue.Add("title", "test")
-
 	var body io.Reader
-	body = strings.NewReader(urlValue.Encode())
+	body = strings.NewReader(params.Encode())
 	req, err := http.NewRequest("POST", endPoint, body)
 	if err != nil {
 		return nil, fmt.Errorf("RequestError: %s", err)
@@ -63,7 +60,7 @@ func DoPost(endPoint string, userName string, params interface{}) (*http.Respons
 		return nil, fmt.Errorf("ResponseError: %s", err)
 	}
 
-	if res.StatusCode != 200 {
+	if res.StatusCode != 201 {
 		return nil, errors.New(res.Status)
 	}
 
