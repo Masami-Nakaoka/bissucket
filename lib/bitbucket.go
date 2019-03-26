@@ -1,6 +1,7 @@
 package bitbucket
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -41,7 +42,7 @@ func DoGet(endPoint string, userName string) (*http.Response, error) {
 	return res, nil
 }
 
-func DoPost(endPoint string, userName string, params url.Values) (*http.Response, error) {
+func DoPost(endPoint string, userName string, params url.Values) error {
 
 	endPoint = bitbucketURI + endPoint
 	pass := config.GetConfigValueByKey("bitbucketPassword")
@@ -50,19 +51,21 @@ func DoPost(endPoint string, userName string, params url.Values) (*http.Response
 	body = strings.NewReader(params.Encode())
 	req, err := http.NewRequest("POST", endPoint, body)
 	if err != nil {
-		return nil, fmt.Errorf("RequestError: %s", err)
+		return fmt.Errorf("RequestError: %s", err)
 	}
 	req.Header.Set("Content-Type", "application/application/x-www-form-urlencoded")
 	req.SetBasicAuth(userName, pass)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("ResponseError: %s", err)
+		return fmt.Errorf("ResponseError: %s", err)
 	}
 
 	if res.StatusCode != 201 {
-		return nil, errors.New(res.Status)
+		return errors.New(res.Status)
 	}
 
-	return res, nil
+	defer res.Body.Close()
+
+	return json.NewDecoder(res.Body).Decode(&res)
 }

@@ -10,6 +10,22 @@ import (
 	"github.com/urfave/cli"
 )
 
+var (
+	listItem = map[string][]string{
+		"kind":     {"bug", "enhancement", "proposal", "task"},
+		"priority": {"trivial", "minor", "major", "critical", "blocker"},
+	}
+)
+
+func existenceCheck(listName string, list []string, checkValue string) error {
+	for _, v := range list {
+		if v == checkValue {
+			return nil
+		}
+	}
+	return fmt.Errorf("Specify one of the following for %v: %v", listName, list)
+}
+
 func Create(c *cli.Context) error {
 	if !c.Args().Present() {
 		return errors.New("The title of the issue is a required item.")
@@ -20,15 +36,29 @@ func Create(c *cli.Context) error {
 
 	issue := url.Values{}
 	issue.Add("title", c.Args()[1])
+	if c.String("priority") != "" {
+		err := existenceCheck("priority", listItem["priority"], c.String("priority"))
+		if err != nil {
+			return err
+		}
+		issue.Add("priority", c.String("priority"))
+	}
+	if c.String("kind") != "" {
+		err := existenceCheck("kind", listItem["kind"], c.String("kind"))
+		if err != nil {
+			return err
+		}
+		issue.Add("kind", c.String("kind"))
+	}
 
 	endPoint := "repositories/" + userName + "/" + repoName + "/issues"
 
-	res, err := bitbucket.DoPost(endPoint, userName, issue)
+	err := bitbucket.DoPost(endPoint, userName, issue)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(res)
+	fmt.Println("Issue create sucess")
 
 	return nil
 }
